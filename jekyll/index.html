@@ -1,0 +1,23 @@
+---
+layout: default
+pagination:
+  enabled: true
+---
+
+<ul class="mainpage_element">
+  {% for post in site.posts %}
+    <li>
+      <a href="{{ post.url | relative_url }}">
+      <img src="{{- post.image | relative_url -}}" alt="" class="blog-roll-image">
+      &nbsp;{{ post.title }}</a><br>
+      <time datetime="{{ post.date | date_to_xmlschema }}" style="font-size: 12px;">{{ post.date | date_to_string }}</time>
+      {% for tag in post.tags %}
+         <a href="/t/{{ tag | downcase | replace: ' ', '-' }}" style="font-size: 12px; padding-left: 10px;">
+           #{{ tag }}
+         </a>
+      {% endfor %}
+      </br>
+      <br>
+    </li>
+  {% endfor %}
+</ul>

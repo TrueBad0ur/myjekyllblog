@@ -1,0 +1,12 @@
+---
+layout: default
+---
+
+<article>
+  <!-- <header class="post-header"> -->
+   <!-- <img src="{{- page.image | relative_url -}}" alt="" class="featured-image-post"> -->
+  <!-- </header> -->
+  <h2>{{ page.title }}</h2>
+  <time datetime="{{ page.date | date_to_xmlschema }}" class="by-line">{{ page.date | date_to_string }}</time>
+  {{ content }}
+</article>
