@@ -24,6 +24,7 @@ plugins:
   - jekyll-seo-tag
 #  - jekyll-paginate-v2
   - jekyll-sitemap
+#  - jekyll-polyglot
 
 # Custom variables
 owner : "truebad0ur"

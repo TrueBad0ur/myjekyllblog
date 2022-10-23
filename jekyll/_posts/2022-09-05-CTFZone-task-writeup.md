@@ -6,6 +6,7 @@ image: /assets/previews/10.jpg
 layout: page
 pagination: 
   enabled: true
+lang: en
 ---
 
 Well, it's time to post intended way write-up for my own reverse task. It wasn't very hard and the players told that it was funny :)
