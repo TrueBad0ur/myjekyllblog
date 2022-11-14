@@ -45,6 +45,9 @@ pagination:
 #### [](#header-4)Записки Йосифовича по приколам винды
 [https://scorpiosoftware.net/category/windows-internals](https://scorpiosoftware.net/category/windows-internals)
 
+#### [](#header-4)UEFI
+[https://github.com/tianocore/tianocore.github.io/wiki/UEFI-EDKII-Learning-Dev](https://github.com/tianocore/tianocore.github.io/wiki/UEFI-EDKII-Learning-Dev)
+
 #### [](#header-4)Мануалы по кракам прог
 [https://manhunter.ru/underground](https://manhunter.ru/underground)
 
