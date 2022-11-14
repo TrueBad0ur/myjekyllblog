@@ -59,6 +59,11 @@ pagination:
 #### [](#header-4)Блоги, вирусы, статьи
 [https://z0mbie.daemonlab.org](https://z0mbie.daemonlab.org)
 
+#### [](#header-4)Lord Of The Ring0
+[https://idov31.github.io/2022/07/14/lord-of-the-ring0-p1.html](Part 1)
+[https://idov31.github.io/2022/08/04/lord-of-the-ring0-p2.html](Part 2)
+[https://idov31.github.io/2022/10/30/lord-of-the-ring0-p3.html](Part 3)
+
 #### [](#header-4)Бинари и всё такое
 [https://opensecuritytraining.info/LifeOfBinaries.html](https://opensecuritytraining.info/LifeOfBinaries.html)
 
