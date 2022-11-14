@@ -11,8 +11,8 @@ I write about reverse-engineering, windows internals and exploit development und
 - [ ] Translate article about [kernel pool exploitation](https://media.blackhat.com/bh-dc-11/Mandt/BlackHat_DC_2011_Mandt_kernelpool-wp.pdf)
 - [ ] Old PatchGuard v1
 - [X] Windows Kernel Exploitation 0x04
-- [ ] Windows Kernel Exploitation 0x05
-- [ ] Windows Kernel Exploitation 0x06
+- [X] Windows Kernel Exploitation 0x05
+- [X] Windows Kernel Exploitation 0x06
 - [ ] Windows Kernel Exploitation 0x07
 - [ ] Windows Kernel Exploitation 0x08
 - [ ] Windows Kernel Exploitation 0x09
