@@ -1,5 +1,5 @@
 ---
-title: pwnable.kr
+title: pwnable.kr [ru]
 published: true
 tags: [ "linux", "pwn", "lab" ]
 image: assets/previews/12.jpg

@@ -1,5 +1,5 @@
 ---
-title: Windows Threads Priorities
+title: Windows Threads Priorities [eng]
 published: true
 tags: [ "windows", "lab" ]
 image: assets/previews/17.jpg

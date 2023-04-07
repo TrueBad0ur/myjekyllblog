@@ -1,5 +1,5 @@
 ---
-title: Pseudo-Registers and Expressions in WinDbg
+title: Pseudo-Registers and Expressions in WinDbg [eng]
 published: true
 tags: [ "windbg" ]
 image: /assets/previews/9.jpg

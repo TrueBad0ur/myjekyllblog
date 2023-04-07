@@ -1,5 +1,5 @@
 ---
-title: Скрываемся в списке процессов в ядре
+title: Скрываемся в списке процессов в ядре [ru]
 published: true
 tags: [ "windows", "internals", "lab" ]
 image: /assets/previews/2.jpg

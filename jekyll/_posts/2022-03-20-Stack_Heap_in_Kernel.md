@@ -1,5 +1,5 @@
 ---
-title: Ползаем по стеку и куче в ядре
+title: Ползаем по стеку и куче в ядре [ru]
 published: true
 tags: [ "windows", "internals" ]
 image: /assets/previews/1.jpg

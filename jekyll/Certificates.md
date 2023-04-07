@@ -21,8 +21,8 @@ GIAC Exploit Researcher and Advanced Penetration Tester (GXPN)\
 EXP-100\
 &nbsp;&nbsp;&nbsp;EXPLOIT DEVELOPMENT PREREQUISITES
 
-EXP-301\
+EXP-301(OSED)\
 &nbsp;&nbsp;&nbsp;WINDOWS USER MODE EXPLOIT DEVELOPMENT
 
-EXP-401\
+EXP-401(OSEE)\
 &nbsp;&nbsp;&nbsp;ADVANCED WINDOWS EXPLOITATION

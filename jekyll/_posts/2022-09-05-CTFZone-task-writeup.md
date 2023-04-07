@@ -1,5 +1,5 @@
 ---
-title: CTFZone GrandDad's Magic task write-up
+title: CTFZone GrandDad's Magic task write-up [eng]
 published: true
 tags: [ "ctf", "reverseengineering" ]
 image: /assets/previews/10.jpg

@@ -1,5 +1,5 @@
 ---
-title: Немного о прерываниях, их обработке и есесна ядре
+title: Немного о прерываниях, их обработке и есесна ядре [ru]
 published: true
 tags: [ "windows", "internals" ]
 image: /assets/previews/4.jpg

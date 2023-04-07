@@ -10,6 +10,145 @@ pagination:
 
 ## [](#header-2)Склад / Чулан / Сундук ссылок на всё, что только можно, связанное с ревёрсом / книжечки / курсы / много инфы
 
+#### [](#header-4) Maybe most useful links
+[https://malwareunicorn.org/#/workshops](https://malwareunicorn.org/#/workshops)
+
+[https://thestarman.pcministry.com/](https://thestarman.pcministry.com/)
+
+[https://wiki.osdev.org/Main_Page](https://wiki.osdev.org/Main_Page)
+
+[Red Teaming and Malware Analysis](https://gitbook.seguranca-informatica.pt/)
+
+[Red Team Notes](https://www.ired.team/)
+
+[https://www.corelan.be/index.php/articles/](https://www.corelan.be/index.php/articles/)
+
+[http://www.securitytube.net/](http://www.securitytube.net/)
+
+[https://p.ost2.fyi/](https://p.ost2.fyi/)
+
+[https://fuzzysecurity.com/tutorials.html](https://fuzzysecurity.com/tutorials.html)
+
+[https://anti-debug.checkpoint.com/](https://anti-debug.checkpoint.com/)
+
+[https://unprotect.it/](https://unprotect.it/)
+
+[https://gamehacking.academy/about](https://gamehacking.academy/about)
+
+[https://wasm.in](https://wasm.in)
+
+[https://guyinatuxedo.github.io/](https://guyinatuxedo.github.io/)
+
+[https://connormcgarr.github.io/](https://connormcgarr.github.io/)
+
+[http://fumalwareanalysis.blogspot.com/p/malware-analysis-tutorials-reverse.html](http://fumalwareanalysis.blogspot.com/p/malware-analysis-tutorials-reverse.html)
+
+[DFIR](https://www.iblue.team/)
+
+#### [](#header-4) Windows (mainly kernel) Exploitation Links
+[CNIT 127: Exploit Development Lectures + Articles](https://samsclass.info/127/127_F19.shtml)
+
+[github.com/r3p3r/nixawk-awesome-windows-exploitation](https://github.com/r3p3r/nixawk-awesome-windows-exploitation)
+
+[github.com/connormcgarr/Exploit-Development](https://github.com/connormcgarr/Exploit-Development)
+
+[github.com/connormcgarr/Kernel-Exploits](https://github.com/connormcgarr/Kernel-Exploits)
+
+[github.com/ElliotAlderson51/Exploit-Writeups](https://github.com/ElliotAlderson51/Exploit-Writeups)
+
+[github.com/rhamaa/Binary-exploit-writeups#windows_stack_overflows](https://github.com/rhamaa/Binary-exploit-writeups#windows_stack_overflows)
+
+[github.com/wtsxDev/Exploit-Development](https://github.com/wtsxDev/Exploit-Development)
+
+[github.com/sathwikch/windows-exploitation](https://github.com/sathwikch/windows-exploitation)
+
+[github.com/FULLSHADE/WindowsExploitationResources](https://github.com/FULLSHADE/WindowsExploitationResources)
+
+[fullpwnops.com/windows-exploitation-pathway.html](https://web.archive.org/web/20200506122824/https://fullpwnops.com/windows-exploitation-pathway.html)
+
+[github.com/SecWiki/windows-kernel-exploits](https://github.com/SecWiki/windows-kernel-exploits)
+
+[corelan.be](https://www.corelan.be)
+
+[malwareunicorn.org/#/workshops](https://malwareunicorn.org/#/workshops)
+
+[p.ost2.fyi](https://p.ost2.fyi)
+
+[securitytube.net](http://www.securitytube.net)
+
+[ctf101.org/binary-exploitation/overview](https://ctf101.org/binary-exploitation/overview)
+
+[Windows Stack Protection I: Assembly Code](http://www.bowneconsultingcontent.com//pub/EH/proj/cloud/ED301c_tkp/ED301c_tkp.htm)
+
+[Windows Stack Protection II: Exploit Without ASLR](http://www.bowneconsultingcontent.com//pub/EH/proj/cloud/ED302c_tkp/ED302c_tkp.htm)
+
+[Windows Stack Protection III: Limitations of ASLR](http://www.bowneconsultingcontent.com//pub/EH/proj/cloud/ED303c_tkp/ED303c_tkp.htm)
+
+[The Wild World of Windows](https://samsclass.info/127/lec/EDch6.pdf)
+
+[SEH-Based Stack Overflow Exploit](https://samsclass.info/127/proj/ED319.htm)
+
+[Exploiting Easy RM to MP3 Converter on Windows with ASLR](https://samsclass.info/127/proj/ED318.htm)
+
+[Bypassing Browser Memory Protections](https://www.blackhat.com/presentations/bh-usa-08/Sotirov_Dowd/bh08-sotirov-dowd.pdf)
+
+[The Basics of Exploit Development 1: Win32 Buffer Overflows](https://www.coalfire.com/the-coalfire-blog/the-basics-of-exploit-development)
+
+[The Basics of Exploit Development 2: SEH Overflows](https://www.coalfire.com/the-coalfire-blog/the-basics-of-exploit-development-2-seh-overflows)
+
+[The Basics of Exploit Development 3: Egg Hunters](https://www.coalfire.com/the-coalfire-blog/the-basics-of-exploit-development-3-egg-hunters)
+
+[The Basics of Exploit Development 4: Unicode Overflows](https://www.coalfire.com/the-coalfire-blog/the-basics-of-exploit-development-4-unicode-overfl)
+
+[The Basics of Exploit Development 5: x86-64 Buffer Overflows](https://www.coalfire.com/the-coalfire-blog/the-basics-of-exploit-development-5-x86-64-buffer)
+
+[Awesome Advanced Windows Exploitation References](https://github.com/yeyintminthuhtut/Awesome-Advanced-Windows-Exploitation-References)
+
+#### [](#header-4) Forums
+[https://community.osr.com](https://community.osr.com)
+
+[https://www.unknowncheats.me](unknowncheats.me)
+
+[https://reverseengineering.stackexchange.com/](https://reverseengineering.stackexchange.com/)
+
+[http://forum.ru-board.com/forum.cgi?forum=35](Warez forum.ru-board.com)
+
+[https://forum.reverse4you.org/categories](R0 CREW https://forum.reverse4you.org/categories)
+
+[https://cracked.io/index.php](https://cracked.io/index.php)
+
+[https://cracklab.team/index.php](https://cracklab.team/index.php)
+
+#### [](#header-4)悪魔のツール"ルートキット"最前線 Devil's tool "rootkit"
+[1](https://xtech.nikkei.com/it/article/COLUMN/20070927/283163)
+
+[2](https://xtech.nikkei.com/it/article/COLUMN/20070927/283167)
+
+[3](https://xtech.nikkei.com/it/article/COLUMN/20070928/283206)
+
+[4](https://xtech.nikkei.com/it/article/COLUMN/20070928/283201)
+
+[5](https://xtech.nikkei.com/it/article/COLUMN/20070928/283226)
+
+[6](https://xtech.nikkei.com/it/article/COLUMN/20071107/286632)
+
+[7](https://xtech.nikkei.com/it/article/COLUMN/20071107/286603)
+
+[8](https://xtech.nikkei.com/it/article/COLUMN/20071107/286635)
+
+[9](https://xtech.nikkei.com/it/article/COLUMN/20071107/286636)
+
+[10](https://xtech.nikkei.com/it/article/COLUMN/20071107/286637)
+
+[11](https://xtech.nikkei.com/it/article/COLUMN/20091004/338335)
+
+[12](https://xtech.nikkei.com/it/article/COLUMN/20091113/340488)
+
+[13](https://xtech.nikkei.com/it/article/COLUMN/20100104/342807)
+
+#### [](#header-4)WikiLeaks leak CIA hacking tools
+[https://wikileaks.org/ciav7p1/cms/index.html](https://wikileaks.org/ciav7p1/cms/index.html)
+
 #### [](#header-4)Максимально понятное объяснение про память, сегменты, трансляции и тд на русском
 [https://acm.bsu.by/wiki/Unix2019b/Организация памяти на x86-64](https://acm.bsu.by/wiki/Unix2019b/Организация_памяти_на_x86-64)
 
@@ -33,6 +172,26 @@ pagination:
 
 #### [](#header-4)Величайший Dr. Xiang Fu с туториалами по анализу малвари
 [https://fumalwareanalysis.blogspot.com/p/malware-analysis-tutorials-reverse.html](https://fumalwareanalysis.blogspot.com/p/malware-analysis-tutorials-reverse.html)
+
+#### [](#header-4)Blog with a lot of articles about windows internals
+[blog](https://rayanfam.com/topics/reversing-windows-internals-part1/)
+
+#### [](#header-4)Blog with a lot of articles about forensics and reverse
+[https://eforensicsmag.com/category/news/](https://eforensicsmag.com/category/news/)
+
+##### [](#header-5)some useful articles from it:
+
+[An Introduction To Memory Forensics: Windows Process Internals](https://eforensicsmag.com/an-introduction-to-memory-forensics-windows-process-internals-by-joseph-moronwi/)
+
+[Windows Process Internals : A few Concepts to know before jumping on Memory Forensics](https://eforensicsmag.com/windows-process-internals-a-few-concepts-to-know-before-jumping-on-memory-forensics-by-kirtar-oza/)
+
+[Windows Process Internals: A few Concepts to know before jumping on Memory Forensics [Part 2] – ldrmodules](https://eforensicsmag.com/windows-process-internals-a-few-concepts-to-know-before-jumping-on-memory-forensics-part-2-ldrmodules-by-kirtar-oza/)
+
+[Windows Process Internals: A few Concepts to know before jumping on Memory Forensics [Part 3] – Journey in to the PsLoadedModuleList ( Loaded Kernel Modules)](https://eforensicsmag.com/windows-process-internals-a-few-concepts-to-know-before-jumping-on-memory-forensics-part-3-journey-in-to-the-psloadedmodulelist-loaded-kernel-modules-by-kirtar-oza/)
+
+[Windows Process Internals: A few Concepts to know before jumping on Memory Forensics [Part 4] — Journey in to the Undocumented VAD Structures (Virtual Address Descriptors)](https://eforensicsmag.com/85384-2/)
+
+[Windows Process Internals: A few Concepts to know before jumping on Memory Forensics [Part 5] – A Journey in to the Undocumented Process Handle Structures (\_handle\_table & \_handle\_table_entry)](https://eforensicsmag.com/windows-process-internals-a-few-concepts-to-know-before-jumping-on-memory-forensics-part-5-a-journey-in-to-the-undocumented-process-handle-structures-_handle_table-_handle_table_entry/)
 
 #### [](#header-4)Всё про антиотладку
 [https://anti-debug.checkpoint.com](https://anti-debug.checkpoint.com)
@@ -1105,6 +1264,8 @@ pagination:
 
 * What Makes It Page?: The Windows 7 (x64) Virtual Memory Manager - Enrico Martignetti
 
+* Memory Dump Analysis Anthology(all parts) - Dmitry Vostokov
+
 * Reverse Engineering для начинающих - Денис Юричев
 
 * Windows Kernel Programming (Работа с ядром Windows) - Pavel Yosifovich
@@ -1116,6 +1277,8 @@ pagination:
 * Windows 10 System Programming, Part 2 - Pavel Yosifovich
 
 * Troubleshooting with the Windows Sysinternals Tools - Mark Russinovich
+
+*  Восстановление данных практическое руководство [2021] - Крис Касперски
 
 * Advanced Windows Debugging - Mario Hewardt
 
@@ -1134,6 +1297,8 @@ pagination:
 
 * Windows via C/C++. Программирование на языке Visual C++ - Джеффри Рихтер, Кристоф Назар
 
+* Modern Windows Exploit Development - Massimiliano Tomassoli [link](https://docs.alexomar.com/biblioteca/Modern%20Windows%20Exploit%20Development.pdf)
+
 * Системное программирование в среде Windows - Харт Джонсон
 
 * Системное программирование в Window - Александр Побегайло
@@ -1146,32 +1311,24 @@ pagination:
 
 * Организация ввода-вывода. Драйверы WDM 2011 - Рощин А.В.
 
-* FireWire System Architecture (2nd Edition)
-* Author(s) Don Anderson
+* FireWire System Architecture (2nd Edition) - Don Anderson
 
-* ISA System Architecture (3rd Edition)
-* Author(s) Tom Shanley, Don Anderson
+* ISA System Architecture (3rd Edition) - Tom Shanley, Don Anderson
 
-* PCI System Architecture (4th Edition)
-* Author(s) Tom Shanley, Don Anderson
+* PCI System Architecture (4th Edition) - Tom Shanley, Don Anderson
 
-* PCI Express System Architecture
-* Author(s) Ravi Budruk, Don Anderson, Tom Shanley
+* PCI Express System Architecture - Ravi Budruk, Don Anderson, Tom Shanley
 
-* PCI-X System Architecture
-* Author(s) Tom Shanley
+* PCI-X System Architecture - Tom Shanley
 
-* SATA Storage Technology
-* Author(s) Don Anderson
+* SATA Storage Technology - Don Anderson
 
-* М. Руссинович, Д. Соломон
-* "Внутреннее устройство Microsoft Windows: Windows Server 2003, Windows XP, Windows 2000."
+* Внутреннее устройство Microsoft Windows: Windows Server 2003, Windows XP, Windows 2000. - М. Руссинович, Д. Соломон
 
-* Свен Шрайбер:
-* "Недокументированные возможности Windows 2000"
-* В.П.Солдатов
+* Недокументированные возможности Windows 2000 - Свен Шрайбер
 
-* Программирование драйверов Windows
-* Rajeev Nagar, Windows NT File System Internals, 1997 (+переиздание 2006
+* Программирование драйверов Windows - В.П.Солдатов
 
-* Руткиты и буткиты. Обратная разработка вредоносных программ и угрозы следующего поколения [2022] Матросов, Родионов, Братусь
+* Windows NT File System Internals, 1997 - Rajeev Nagar
+
+* Руткиты и буткиты. Обратная разработка вредоносных программ и угрозы следующего поколения [2022] - Матросов, Родионов, Братусь

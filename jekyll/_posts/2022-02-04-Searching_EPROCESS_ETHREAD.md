@@ -1,5 +1,5 @@
 ---
-title: Ищем EPROCESS и ETHREAD, отнимаем байтики
+title: Ищем EPROCESS и ETHREAD, отнимаем байтики [ru]
 published: true
 tags: [ "windows", "internals" ]
 image: /assets/previews/6.jpg

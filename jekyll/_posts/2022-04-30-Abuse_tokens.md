@@ -1,5 +1,5 @@
 ---
-title: Абуз токенов для повышения привилегий
+title: Абуз токенов для повышения привилегий [ru]
 published: true
 tags: [ "windows", "internals", "lab" ]
 image: /assets/previews/3.jpg
