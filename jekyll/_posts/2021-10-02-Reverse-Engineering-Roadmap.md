@@ -21,6 +21,8 @@ pagination:
 
 [Red Team Notes](https://www.ired.team/)
 
+[https://www.coursera.org/learn/build-a-computer](https://www.coursera.org/learn/build-a-computer)
+
 [https://www.corelan.be/index.php/articles/](https://www.corelan.be/index.php/articles/)
 
 [http://www.securitytube.net/](http://www.securitytube.net/)
@@ -229,6 +231,9 @@ pagination:
 
 #### [](#header-4)Записки Йосифовича по приколам винды
 [https://scorpiosoftware.net/category/windows-internals](https://scorpiosoftware.net/category/windows-internals)
+
+#### [](#header-4)How to be a low-level programmer
+[https://github.com/gurugio/lowlevelprogramming-university/blob/master/README_ru.md](https://github.com/gurugio/lowlevelprogramming-university/blob/master/README_ru.md)
 
 #### [](#header-4)UEFI
 [https://github.com/tianocore/tianocore.github.io/wiki/UEFI-EDKII-Learning-Dev](https://github.com/tianocore/tianocore.github.io/wiki/UEFI-EDKII-Learning-Dev)
@@ -1275,6 +1280,8 @@ pagination:
 * Windows 10 System Programming, Part 1 - Pavel Yosifovich
 
 * Windows 10 System Programming, Part 2 - Pavel Yosifovich
+
+* The Elements of Computing Systems: Building a Modern Computer from First Principles -  Noam Nisan, Shimon Schocken
 
 * Troubleshooting with the Windows Sysinternals Tools - Mark Russinovich
 
