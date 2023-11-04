@@ -3,6 +3,8 @@ layout: page
 title: Certificates to do / pass
 ---
 
+Here is a list of potential certificates, which may be useful for reverse engineering / digital forensics
+
 GIAC Certified Forensic Examiner (GCFE)\
 &nbsp;&nbsp;&nbsp;FOR500: Windows Forensic Analysis
 
