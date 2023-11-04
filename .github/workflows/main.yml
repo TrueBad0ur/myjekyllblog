@@ -8,16 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Pull updates from github
-      uses: ${{ secrets.PATH }}
+      uses: ./
       with:
         host: ${{ secrets.IP }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: git pull
+        script: cd ${{ secrets.PATH }}; git pull
 
     - name: Deploy
-      uses: ${{ secrets.PATH }}
+      uses: ./
       with:
         host: ${{ secrets.IP }}
         username: ${{ secrets.USERNAME }}
