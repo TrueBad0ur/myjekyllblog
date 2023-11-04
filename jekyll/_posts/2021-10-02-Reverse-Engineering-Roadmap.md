@@ -1267,7 +1267,7 @@ pagination:
 ## [](#header-1)Книги
 
 
-* What Makes It Page?: The Windows 7 (x64) Virtual Memory Manager - Enrico Martignetti
+* What Makes It Page?: The Windows 7 (x64) Virtual Memory Manager - Enrico Martignetti [link](https://t.me/reverse_dungeon/1822)
 
 * Memory Dump Analysis Anthology(all parts) - Dmitry Vostokov
 
@@ -1276,6 +1276,8 @@ pagination:
 * Windows Kernel Programming (Работа с ядром Windows) - Pavel Yosifovich
 
 * Windows Internals Book 7th edition (Внутреннее устройство Windows) - Mark Russinovich
+
+* Фундаментальные основы хакерства. Анализ программ в среде Win64 - Касперски Крис
 
 * Windows 10 System Programming, Part 1 - Pavel Yosifovich
 
