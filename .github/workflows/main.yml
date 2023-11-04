@@ -1,0 +1,26 @@
+name: deploy website
+on: [push]
+
+jobs:
+
+  tasks:
+    name: Deploy new website version
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pull updates from github
+      uses: ${{ secrets.PATH }}
+      with:
+        host: ${{ secrets.IP }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: git pull
+
+    - name: Deploy
+      uses: ${{ secrets.PATH }}
+      with:
+        host: ${{ secrets.IP }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: deploy
