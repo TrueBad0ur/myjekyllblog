@@ -14,7 +14,7 @@ Some links at first as always:
 - [You can download Red Star 2 here](https://rutracker.org/forum/viewtopic.php?t=5830445)
 - [And Red Star 3 here](https://rutracker.org/forum/viewtopic.php?t=5830480)
 - [And read some staff how intranet works in North Korea](https://www.forensicxs.com/north-korea-and-the-web/)
-- Files from this article will be uploaded to my TG channel: https://t.me/reverse_dungeon
+- [Files from this article will be uploaded to my TG channel](https://t.me/reverse_dungeon)
 - [Funny review video about Red Star OS](https://www.youtube.com/watch?v=zPeYODmEoTM)
 
 Well, some time ago I made a forensics task for one of the CTF's that we had in our university. And in that task I used Red Star OS, but didn't mention the depth of it for researching. I mean they have their own browser, their own root "bypass" tool and much much more
