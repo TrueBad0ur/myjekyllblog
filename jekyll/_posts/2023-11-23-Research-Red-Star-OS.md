@@ -1,5 +1,5 @@
 ---
-title: Reaserch on North Korean OS - Red Star OS [eng/ru]
+title: Reaserch on North Korean OS - Red Star OS [eng/ru] [Not finished]
 published: true
 tags: [ "linux", "research" ]
 image: /assets/previews/25.jpg
