@@ -2,7 +2,7 @@
 title: VK cloud nginx ingress controller [eng]
 published: true
 tags: [ "devops", "kubernetes" ]
-image: /assets/previews/25.jpg
+image: /assets/previews/26.jpg
 layout: page
 pagination: 
   enabled: true
@@ -87,8 +87,8 @@ We need some files for terraform in vk cloud:
 
 - [Official manual](https://cloud.vk.com/docs/manage/tools-for-using-services/terraform/quick-start)
 
-```yaml
-main.yml
+```bash
+main.tf
 
 data "vkcs_compute_flavor" "k8s-master-flavor" {
     name = "STD3-4-8"
@@ -152,8 +152,8 @@ resource "vkcs_kubernetes_node_group" "k8s-node-group" {
 }
 ```
 
-```yaml
-network.yml
+```bash
+network.tf
 
 data "vkcs_networking_network" "extnet" {
   name = "ext-net"
