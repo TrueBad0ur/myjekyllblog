@@ -7,7 +7,7 @@ I write in Russian, but as soon as possible translation button will be added
 I write about reverse-engineering, windows internals and exploit development under windows mostly
 
 
-## ToDo
+## ToDo (never gonna complete)
 - [ ] Translate article about [kernel pool exploitation](https://media.blackhat.com/bh-dc-11/Mandt/BlackHat_DC_2011_Mandt_kernelpool-wp.pdf)
 - [ ] Old PatchGuard v1
 - [X] Windows Kernel Exploitation 0x04
