@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="generator" content="Jekyll">
+
+  <title>VK cloud nginx ingress controller [eng]</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <!-- <link href="assets/favicon.ico" rel="icon" type="image/x-icon" /> -->
+  <link rel="shortcut icon" type="image/png" href="assets//favicon.png">
+  <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" /> <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>VK cloud nginx ingress controller [eng] | Windows Internals Blog</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="VK cloud nginx ingress controller [eng]" />
+<meta name="author" content="truebad0ur" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Some links at first as always:" />
+<meta property="og:description" content="Some links at first as always:" />
+<meta property="og:site_name" content="Windows Internals Blog" />
+<meta property="og:image" content="/assets/previews/26.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-12-29T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/assets/previews/26.jpg" />
+<meta property="twitter:title" content="VK cloud nginx ingress controller [eng]" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"truebad0ur"},"dateModified":"2023-12-29T00:00:00+00:00","datePublished":"2023-12-29T00:00:00+00:00","description":"Some links at first as always:","headline":"VK cloud nginx ingress controller [eng]","image":"/assets/previews/26.jpg","mainEntityOfPage":{"@type":"WebPage","@id":"/2023/12/29/VK-cloud-nginx-ingress-controller.html"},"url":"/2023/12/29/VK-cloud-nginx-ingress-controller.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<link href="assets/favicon.ico" rel="icon" type="image/x-icon" />
+
+<body>
+  <div id="wrapper">
+    <header>
+  <div>
+    <a href="/">
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+    
+    <h1>truebad0ur@home:~$</h1>
+    </a>
+    <div class="header-links">
+      <a href="/archive.html"><h2 class="header-link">Archive</h2></a>
+<a href="/about.html"><h2 class="header-link">About</h2></a>
+<a href="/ToDo.html"><h2 class="header-link">ToDo</h2></a>
+<a href="/Certificates.html"><h2 class="header-link">Certificates</h2></a>
+<!--<a href="https://t.me/reverse_dungeon"><h2 class="header-link">Telegram</h2></a>-->
+
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <section id="main_content">
+        <article>
+  <p>Some links at first as always:</p>
+
+<ul>
+  <li><a href="https://cloud.vk.com/docs/base/k8s/use-cases/ingress/ingress-tcp">Official manual</a></li>
+  <li><a href="https://github.com/TrueBad0ur/vkcloud_kubernetes">Git k8s cluster on vk cloud</a></li>
+</ul>
+
+<p>Well, because I’ve changed my field of interests, here will be a lot of devops/cloud posts</p>
+
+<p>Hope you’d like it :)</p>
+
+<h3 id="all-what-you-need"><a href="#header-3"></a>All what you need</h3>
+
+<p>There are many options how to set up k8s cluster:</p>
+
+<ol>
+  <li>locally minikube</li>
+  <li>locally k3s</li>
+  <li>in the cloud (our case)</li>
+</ol>
+
+<p>Locally we should provide all of the controllers and network solutions by ourselves</p>
+
+<p>In the cloud all of this staff has already been done by the cloud provider</p>
+
+<p>Why vk cloud? Because I don’t have aws accout :( and vk cloud gives 3k ru for tests :)</p>
+
+<p>What we’ll need:</p>
+
+<ol>
+  <li>terraform configs for k8s cluster</li>
+  <li>configs for k8s for all of our services</li>
+  <li>helm nginx ingress controller</li>
+</ol>
+
+<h3 id="terraform"><a href="#header-3"></a>Terraform</h3>
+
+<p>I use debian as main OS, so the man will also be targeted on it</p>
+
+<ul>
+  <li><a href="https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli">Official manual</a></li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> gnupg software-properties-common
+
+wget <span class="nt">-O-</span> https://apt.releases.hashicorp.com/gpg | gpg <span class="nt">--dearmor</span> | <span class="nb">sudo tee</span> /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+<span class="nb">echo</span> <span class="s2">"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com </span><span class="si">$(</span>lsb_release <span class="nt">-cs</span><span class="si">)</span><span class="s2"> main"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/hashicorp.list
+
+<span class="nb">sudo </span>apt update
+
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>terraform
+</code></pre></div></div>
+
+<p>WooHoo, we have terraform!</p>
+
+<h3 id="kubectl"><a href="#header-3"></a>kubectl</h3>
+
+<ul>
+  <li><a href="https://kubernetes.io/docs/tasks/tools/">Official manual</a></li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-LO</span> <span class="s2">"https://dl.k8s.io/release/</span><span class="si">$(</span>curl <span class="nt">-L</span> <span class="nt">-s</span> https://dl.k8s.io/release/stable.txt<span class="si">)</span><span class="s2">/bin/linux/amd64/kubectl"</span>
+
+<span class="nb">sudo install</span> <span class="nt">-o</span> root <span class="nt">-g</span> root <span class="nt">-m</span> 0755 kubectl /usr/local/bin/kubectl
+</code></pre></div></div>
+
+<p>WooHoo, we have kubectl!</p>
+
+<h3 id="helm"><a href="#header-3"></a>helm</h3>
+
+<ul>
+  <li><a href="https://helm.sh/docs/intro/install/">Official manual</a></li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://get.helm.sh/helm-v3.13.3-linux-amd64.tar.gz
+
+<span class="nb">tar</span> <span class="nt">-zxvf</span> helm-v3.13.3-linux-amd64.tar.gz
+
+<span class="nb">mv </span>helm-v3.13.3-linux-amd64/linux-amd64/helm /usr/local/bin/helm
+</code></pre></div></div>
+
+<h3 id="setup-k8s-cluster-in-vk-cloud"><a href="#header-3"></a>Setup k8s cluster in vk cloud</h3>
+
+<p>We need some files for terraform in vk cloud:</p>
+
+<ul>
+  <li><a href="https://cloud.vk.com/docs/manage/tools-for-using-services/terraform/quick-start">Official manual</a></li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>main.tf
+
+data <span class="s2">"vkcs_compute_flavor"</span> <span class="s2">"k8s-master-flavor"</span> <span class="o">{</span>
+    name <span class="o">=</span> <span class="s2">"STD3-4-8"</span>
+<span class="o">}</span>
+
+data <span class="s2">"vkcs_compute_flavor"</span> <span class="s2">"k8s-node-group-flavor"</span> <span class="o">{</span>
+ name <span class="o">=</span> <span class="s2">"STD2-2-4"</span>
+<span class="o">}</span>
+
+data <span class="s2">"vkcs_kubernetes_clustertemplate"</span> <span class="s2">"k8s-template"</span> <span class="o">{</span>
+    version <span class="o">=</span> <span class="s2">"1.26"</span>
+<span class="o">}</span>
+
+resource <span class="s2">"vkcs_kubernetes_cluster"</span> <span class="s2">"k8s-cluster"</span> <span class="o">{</span>
+
+  depends_on <span class="o">=</span> <span class="o">[</span>
+    vkcs_networking_router_interface.k8s,
+  <span class="o">]</span>
+
+  name                <span class="o">=</span> <span class="s2">"k8s-cluster-tf"</span>
+  cluster_template_id <span class="o">=</span> data.vkcs_kubernetes_clustertemplate.k8s-template.id
+  master_flavor       <span class="o">=</span> data.vkcs_compute_flavor.k8s-master-flavor.id
+  master_count        <span class="o">=</span> 1
+  network_id          <span class="o">=</span> vkcs_networking_network.k8s.id
+  subnet_id           <span class="o">=</span> vkcs_networking_subnet.k8s.id
+  availability_zone   <span class="o">=</span> <span class="s2">"GZ1"</span>
+
+  floating_ip_enabled <span class="o">=</span> <span class="nb">true</span>
+
+<span class="o">}</span>
+
+resource <span class="s2">"vkcs_kubernetes_node_group"</span> <span class="s2">"k8s-node-group"</span> <span class="o">{</span>
+  name <span class="o">=</span> <span class="s2">"k8s-node-group"</span>
+  cluster_id <span class="o">=</span> vkcs_kubernetes_cluster.k8s-cluster.id
+  flavor_id <span class="o">=</span> data.vkcs_compute_flavor.k8s-node-group-flavor.id
+
+  node_count <span class="o">=</span> 2
+
+
+  labels <span class="o">{</span>
+        key <span class="o">=</span> <span class="s2">"env"</span>
+        value <span class="o">=</span> <span class="s2">"test"</span>
+    <span class="o">}</span>
+
+  labels <span class="o">{</span>
+        key <span class="o">=</span> <span class="s2">"disktype"</span>
+        value <span class="o">=</span> <span class="s2">"ssd"</span>
+    <span class="o">}</span>
+
+  taints <span class="o">{</span>
+        key <span class="o">=</span> <span class="s2">"taintkey1"</span>
+        value <span class="o">=</span> <span class="s2">"taintvalue1"</span>
+        effect <span class="o">=</span> <span class="s2">"PreferNoSchedule"</span>
+    <span class="o">}</span>
+
+  taints <span class="o">{</span>
+        key <span class="o">=</span> <span class="s2">"taintkey2"</span>
+        value <span class="o">=</span> <span class="s2">"taintvalue2"</span>
+        effect <span class="o">=</span> <span class="s2">"PreferNoSchedule"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>network.tf
+
+data <span class="s2">"vkcs_networking_network"</span> <span class="s2">"extnet"</span> <span class="o">{</span>
+  name <span class="o">=</span> <span class="s2">"ext-net"</span>
+<span class="o">}</span>
+
+resource <span class="s2">"vkcs_networking_network"</span> <span class="s2">"k8s"</span> <span class="o">{</span>
+  name           <span class="o">=</span> <span class="s2">"k8s-net"</span>
+  admin_state_up <span class="o">=</span> <span class="nb">true</span>
+<span class="o">}</span>
+
+resource <span class="s2">"vkcs_networking_subnet"</span> <span class="s2">"k8s"</span> <span class="o">{</span>
+  name            <span class="o">=</span> <span class="s2">"k8s-subnet"</span>
+  network_id      <span class="o">=</span> vkcs_networking_network.k8s.id
+  cidr            <span class="o">=</span> <span class="s2">"192.168.199.0/24"</span>
+  dns_nameservers <span class="o">=</span> <span class="o">[</span><span class="s2">"8.8.8.8"</span>, <span class="s2">"8.8.4.4"</span><span class="o">]</span>
+<span class="o">}</span>
+
+resource <span class="s2">"vkcs_networking_router"</span> <span class="s2">"k8s"</span> <span class="o">{</span>
+  name                <span class="o">=</span> <span class="s2">"k8s-router"</span>
+  admin_state_up      <span class="o">=</span> <span class="nb">true
+  </span>external_network_id <span class="o">=</span> data.vkcs_networking_network.extnet.id
+<span class="o">}</span>
+
+resource <span class="s2">"vkcs_networking_router_interface"</span> <span class="s2">"k8s"</span> <span class="o">{</span>
+  router_id <span class="o">=</span> vkcs_networking_router.k8s.id
+  subnet_id <span class="o">=</span> vkcs_networking_subnet.k8s.id
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>terraform init
+terraform <span class="nb">fmt
+</span>terraform validate
+terraform plan
+terraform apply
+
+to delete: terraform destroy
+</code></pre></div></div>
+
+<p>Wait 10-15 minutes and download kubeconfig file from vk cloud</p>
+
+<p>Put it into <code class="language-plaintext highlighter-rouge">~/.kube/config</code></p>
+
+<h3 id="apply-k8s-configs-and-install-nginx-ingress-controller-via-helm"><a href="#header-3"></a>Apply k8s configs and install nginx ingress controller via helm</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ ❯ kubectl apply <span class="nt">-f</span> cafe.yml
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">cafe.yml</span>
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">coffee</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">coffee</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">coffee</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">coffee</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">nginxdemos/nginx-hello:plain-text</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+<span class="nn">---</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">coffee-svc</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">coffee</span>
+<span class="nn">---</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">tea</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">tea</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">tea</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">tea</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">nginxdemos/nginx-hello:plain-text</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+<span class="nn">---</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">tea-svc</span>
+  <span class="na">labels</span><span class="pi">:</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">tea</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ ❯ kubectl get svc,rs,deployment <span class="nt">-n</span> default
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
+service/coffee-svc   ClusterIP   10.254.46.139   &lt;none&gt;        80/TCP    81m
+service/kubernetes   ClusterIP   10.254.0.1      &lt;none&gt;        443/TCP   3h12m
+service/tea-svc      ClusterIP   10.254.60.151   &lt;none&gt;        80/TCP    81m
+
+NAME                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/coffee-77df955494   2         2         2       81m
+replicaset.apps/tea-6b8fc7844       3         3         3       81m
+
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/coffee   2/2     2            2           81m
+deployment.apps/tea      3/3     3            3           81m
+</code></pre></div></div>
+
+<h3 id="helm-1"><a href="#header-4"></a>helm</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo update
+
+helm <span class="nb">install </span>nginx-ingress-tcp nginx-stable/nginx-ingress <span class="nt">--set-string</span> <span class="s1">'controller.config.entries.use-proxy-protocol=true'</span> <span class="nt">--create-namespace</span> <span class="nt">--namespace</span> example-nginx-ingress-tcp
+
+~ ❯ kubectl get svc <span class="nt">-n</span> example-nginx-ingress-tcp
+NAME                           TYPE           CLUSTER-IP     EXTERNAL-IP      PORT<span class="o">(</span>S<span class="o">)</span>                      AGE
+nginx-ingress-tcp-controller   LoadBalancer   10.254.73.94   ...              80:30203/TCP,443:31767/TCP   83m
+
+</code></pre></div></div>
+
+<h3 id="continue-applying-kubectl-configs"><a href="#header-4"></a>continue applying kubectl configs</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ ❯ kubectl apply <span class="nt">-f</span> cafe-ingress.yaml
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">cafe-ingress</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ingressClassName</span><span class="pi">:</span> <span class="s">nginx</span>
+  <span class="na">rules</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">cafe.xn--w8je.xn--tckwe</span>
+    <span class="na">http</span><span class="pi">:</span>
+      <span class="na">paths</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/tea</span>
+        <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+        <span class="na">backend</span><span class="pi">:</span>
+          <span class="na">service</span><span class="pi">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">tea-svc</span>
+            <span class="na">port</span><span class="pi">:</span>
+              <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
+      <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/coffee</span>
+        <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+        <span class="na">backend</span><span class="pi">:</span>
+          <span class="na">service</span><span class="pi">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">coffee-svc</span>
+            <span class="na">port</span><span class="pi">:</span>
+              <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ ❯ kubectl describe ingress cafe-ingress
+
+Name:             cafe-ingress
+Labels:           &lt;none&gt;
+Namespace:        default
+Address:          212.233.123.57
+Ingress Class:    nginx
+Default backend:  &lt;default&gt;
+Rules:
+  Host                     Path  Backends
+  <span class="nt">----</span>                     <span class="nt">----</span>  <span class="nt">--------</span>
+  cafe.xn--w8je.xn--tckwe  
+                           /tea      tea-svc:80 <span class="o">(</span>10.100.197.6:8080,10.100.197.7:8080,10.100.249.200:8080<span class="o">)</span>
+                           /coffee   coffee-svc:80 <span class="o">(</span>10.100.197.5:8080,10.100.249.199:8080<span class="o">)</span>
+Annotations:               &lt;none&gt;
+Events:                    &lt;none&gt;
+</code></pre></div></div>
+
+<p>After some waiting you will get external ip address and you will see:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ ❯ kubectl get svc <span class="nt">-n</span> example-nginx-ingress-tcp
+
+NAME                           TYPE           CLUSTER-IP     EXTERNAL-IP      PORT<span class="o">(</span>S<span class="o">)</span>                      AGE
+nginx-ingress-tcp-controller   LoadBalancer   10.254.73.94   212.233.123.57   80:30203/TCP,443:31767/TCP   88m
+</code></pre></div></div>
+
+<p>To check we can do:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~ ❯ curl cafe.きく.コム/tea           
+Server address: 10.100.197.6:8080
+Server name: tea-6b8fc7844-9mcmn
+Date: 29/Dec/2023:15:50:49 +0000
+URI: /tea
+Request ID: 0789fe10b31c67c4da0f6ab3b2dec8a1
+
+~ ❯ curl cafe.きく.コム/coffee
+Server address: 10.100.197.5:8080
+Server name: coffee-77df955494-wh987
+Date: 29/Dec/2023:15:50:52 +0000
+URI: /coffee
+Request ID: 0f8fe754ba5833cd2de074d506080a54
+</code></pre></div></div>
+
+<p>We can see that ips are from pull that was allocated for out pods(see in <code class="language-plaintext highlighter-rouge">kubectl describe ingress cafe-ingress</code>)</p>
+
+</article>
+      </section>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="generator" content="Jekyll">
+
+  <title>Ищем EPROCESS и ETHREAD, отнимаем байтики [ru]</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <!-- <link href="assets/favicon.ico" rel="icon" type="image/x-icon" /> -->
+  <link rel="shortcut icon" type="image/png" href="assets//favicon.png">
+  <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" /> <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Ищем EPROCESS и ETHREAD, отнимаем байтики [ru] | Windows Internals Blog</title>
+<meta name="generator" content="Jekyll v4.3.3" />
+<meta property="og:title" content="Ищем EPROCESS и ETHREAD, отнимаем байтики [ru]" />
+<meta name="author" content="truebad0ur" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Каждый процесс представлен структурой EPROCESS (executive process block) в ядре. EPROCESS указывает на число связанных структур, например: у каждого процесса есть 1 или более потоков, которые представляются структурой ETHREAD. EPROCESS указывает на PEB (process environment block) в адресном пространстве процесса ETHREAD указывает на TEB (thread environment block) в адресном пространстве процесса _______________________ | Process environment | ---&gt; | block (PEB) | &lt;--------- | |_______________________| | | | | | | ______________ | | Thread | | | environment | | | Block (TEB) | | |______________| | ^ | | User-Mode: Process Address Spase | ---------------------------------------------------------------- Kernel-Mode: System Address Space | | | | | | | | | __________________ | | Process block | | | EPROCESS | KTHREAD |__________________| | | | | _______________ | | | Thread block |---&gt;... | ----------&gt;| ETHREAD |------------| |_______________| Что есть в PEB и TEB PEB - Process Environment Block базовая информация об образе (базовый адрес, значение версии, список модулей) информации о куче в процессе переменные среды параметры командной строки путь для поиска DLL Чтобы отобразить: !peb dt nt!_PEB Чтобы посмотреть для чужого процесса: kd&gt; .process /p ffffe20fb340e080; !peb 10f90d5000 предварительно получив список процессов с адресами: !process 0 0 TEB - Thread Environment Block информация о стеке (база стека, лимит стека) TLS (thread local storage) массив Чтобы отобразить: !teb dt nt!_TEB Посмотреть потоки другого процесса: kd&gt; !process 0 4 processname.exe kd&gt; dt nt!_KTHREAD ffffe20faeb39080 Получаем руками все процессы: Общая идея примерно такая: Из PsActiveProcessHead получаем адрес, где лежит head списка процессов Само значение, которое мы получили, уже является ссылкой на следующий объект списка (то есть FLINK - forward link) Адрес, который мы получили - это структура LIST_ENTRY, в которой два поля: на след объект и на предыдущий, сам по себе этот полученный адрес лежит в середине структуры процесса в ActiveProcessLinks Получаем начало структуры процесса отнимая от полученного адреса сдвиг до начала kd&gt; x nt!PsActiveProcessHead fffff803`5f01df60 nt!PsActiveProcessHead = &lt;no type information&gt; kd&gt; dq fffff803`5f01df60 fffff803`5f01df60 ffffca86`79a5b488 ffffca86`806b5788 fffff803`5f01df70 00000000`000001f4 00000000`00000000 fffff803`5f01df80 00000000`00000000 00000000`00000000 fffff803`5f01df90 fffff803`5ed07ea0 00000000`00000000 kd&gt; dt nt!_EPROCESS ... +0x448 ActiveProcessLinks : _LIST_ENTRY ... kd&gt; ?ffffca86`79a5b488 - 0x448 Evaluate expression: -58796061380544 = ffffca86`79a5b040 kd&gt; dt nt!_EPROCESS ffffca86`79a5b040 (как прувнуть, что всё ок) ... +0x5a8 ImageFileName : [15] &quot;System&quot; Как получить следующие в списке процессы? Берём значение из ActiveProcessLinks Первый адрес - flink, второй - blink Отнимаем оффсет Дампим структуру Автоматизация: dt nt!_EPROCESS -l ActiveProcessLinks.Flink ffffca86`79a5b040 Получаем руками все потоки процесса: kd&gt; !process 0 0 ... PROCESS ffffca8680630080 SessionId: 1 Cid: 19cc Peb: 002ff000 ParentCid: 0abc DirBase: 135b3000 ObjectTable: ffffb60d17072980 HandleCount: 57. Image: threads.exe ... kd&gt; dt nt!_EPROCESS ffffca8680630080 ... +0x5e0 ThreadListHead : _LIST_ENTRY [ 0xffffca86`818bc9e8 - 0xffffca86`7bf5e9e8 ] ... kd&gt; dt nt!_ETHREAD ... +0x4e8 ThreadListEntry : _LIST_ENTRY ... kd&gt; ?0xffffca86`818bc9e8 - 0x4e8 Evaluate expression: -58795928861440 = ffffca86`818bc500 kd&gt; dt nt!_ETHREAD -l ThreadListEntry.Flink -y Thread ffffca86`818bc500 ... ThreadListEntry.Flink at 0xffffca86`818bc500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`851e59e8 - 0xffffca86`80630660 ] ... ThreadListEntry.Flink at 0xffffca86`851e5500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`7e37c9e8 - 0xffffca86`818bc9e8 ] ... ThreadListEntry.Flink at 0xffffca86`7e37c500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`7bf5e9e8 - 0xffffca86`851e59e8 ] ... ThreadListEntry.Flink at 0xffffca86`7bf5e500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`80630660 - 0xffffca86`7e37c9e8 ] ... напочитать: Английская статья, откуда брал почти весь материал и пара ссылок на структуры / Understanding LIST_ENTRY Lists and Its Importance in Operating Systems - Meena Chockalingam Ядерные и не только структуры Чего там с этими LIST_ENTRY то" />
+<meta property="og:description" content="Каждый процесс представлен структурой EPROCESS (executive process block) в ядре. EPROCESS указывает на число связанных структур, например: у каждого процесса есть 1 или более потоков, которые представляются структурой ETHREAD. EPROCESS указывает на PEB (process environment block) в адресном пространстве процесса ETHREAD указывает на TEB (thread environment block) в адресном пространстве процесса _______________________ | Process environment | ---&gt; | block (PEB) | &lt;--------- | |_______________________| | | | | | | ______________ | | Thread | | | environment | | | Block (TEB) | | |______________| | ^ | | User-Mode: Process Address Spase | ---------------------------------------------------------------- Kernel-Mode: System Address Space | | | | | | | | | __________________ | | Process block | | | EPROCESS | KTHREAD |__________________| | | | | _______________ | | | Thread block |---&gt;... | ----------&gt;| ETHREAD |------------| |_______________| Что есть в PEB и TEB PEB - Process Environment Block базовая информация об образе (базовый адрес, значение версии, список модулей) информации о куче в процессе переменные среды параметры командной строки путь для поиска DLL Чтобы отобразить: !peb dt nt!_PEB Чтобы посмотреть для чужого процесса: kd&gt; .process /p ffffe20fb340e080; !peb 10f90d5000 предварительно получив список процессов с адресами: !process 0 0 TEB - Thread Environment Block информация о стеке (база стека, лимит стека) TLS (thread local storage) массив Чтобы отобразить: !teb dt nt!_TEB Посмотреть потоки другого процесса: kd&gt; !process 0 4 processname.exe kd&gt; dt nt!_KTHREAD ffffe20faeb39080 Получаем руками все процессы: Общая идея примерно такая: Из PsActiveProcessHead получаем адрес, где лежит head списка процессов Само значение, которое мы получили, уже является ссылкой на следующий объект списка (то есть FLINK - forward link) Адрес, который мы получили - это структура LIST_ENTRY, в которой два поля: на след объект и на предыдущий, сам по себе этот полученный адрес лежит в середине структуры процесса в ActiveProcessLinks Получаем начало структуры процесса отнимая от полученного адреса сдвиг до начала kd&gt; x nt!PsActiveProcessHead fffff803`5f01df60 nt!PsActiveProcessHead = &lt;no type information&gt; kd&gt; dq fffff803`5f01df60 fffff803`5f01df60 ffffca86`79a5b488 ffffca86`806b5788 fffff803`5f01df70 00000000`000001f4 00000000`00000000 fffff803`5f01df80 00000000`00000000 00000000`00000000 fffff803`5f01df90 fffff803`5ed07ea0 00000000`00000000 kd&gt; dt nt!_EPROCESS ... +0x448 ActiveProcessLinks : _LIST_ENTRY ... kd&gt; ?ffffca86`79a5b488 - 0x448 Evaluate expression: -58796061380544 = ffffca86`79a5b040 kd&gt; dt nt!_EPROCESS ffffca86`79a5b040 (как прувнуть, что всё ок) ... +0x5a8 ImageFileName : [15] &quot;System&quot; Как получить следующие в списке процессы? Берём значение из ActiveProcessLinks Первый адрес - flink, второй - blink Отнимаем оффсет Дампим структуру Автоматизация: dt nt!_EPROCESS -l ActiveProcessLinks.Flink ffffca86`79a5b040 Получаем руками все потоки процесса: kd&gt; !process 0 0 ... PROCESS ffffca8680630080 SessionId: 1 Cid: 19cc Peb: 002ff000 ParentCid: 0abc DirBase: 135b3000 ObjectTable: ffffb60d17072980 HandleCount: 57. Image: threads.exe ... kd&gt; dt nt!_EPROCESS ffffca8680630080 ... +0x5e0 ThreadListHead : _LIST_ENTRY [ 0xffffca86`818bc9e8 - 0xffffca86`7bf5e9e8 ] ... kd&gt; dt nt!_ETHREAD ... +0x4e8 ThreadListEntry : _LIST_ENTRY ... kd&gt; ?0xffffca86`818bc9e8 - 0x4e8 Evaluate expression: -58795928861440 = ffffca86`818bc500 kd&gt; dt nt!_ETHREAD -l ThreadListEntry.Flink -y Thread ffffca86`818bc500 ... ThreadListEntry.Flink at 0xffffca86`818bc500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`851e59e8 - 0xffffca86`80630660 ] ... ThreadListEntry.Flink at 0xffffca86`851e5500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`7e37c9e8 - 0xffffca86`818bc9e8 ] ... ThreadListEntry.Flink at 0xffffca86`7e37c500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`7bf5e9e8 - 0xffffca86`851e59e8 ] ... ThreadListEntry.Flink at 0xffffca86`7bf5e500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`80630660 - 0xffffca86`7e37c9e8 ] ... напочитать: Английская статья, откуда брал почти весь материал и пара ссылок на структуры / Understanding LIST_ENTRY Lists and Its Importance in Operating Systems - Meena Chockalingam Ядерные и не только структуры Чего там с этими LIST_ENTRY то" />
+<meta property="og:site_name" content="Windows Internals Blog" />
+<meta property="og:image" content="/assets/previews/6.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-02-04T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="/assets/previews/6.jpg" />
+<meta property="twitter:title" content="Ищем EPROCESS и ETHREAD, отнимаем байтики [ru]" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"truebad0ur"},"dateModified":"2022-02-04T00:00:00+00:00","datePublished":"2022-02-04T00:00:00+00:00","description":"Каждый процесс представлен структурой EPROCESS (executive process block) в ядре. EPROCESS указывает на число связанных структур, например: у каждого процесса есть 1 или более потоков, которые представляются структурой ETHREAD. EPROCESS указывает на PEB (process environment block) в адресном пространстве процесса ETHREAD указывает на TEB (thread environment block) в адресном пространстве процесса _______________________ | Process environment | ---&gt; | block (PEB) | &lt;--------- | |_______________________| | | | | | | ______________ | | Thread | | | environment | | | Block (TEB) | | |______________| | ^ | | User-Mode: Process Address Spase | ---------------------------------------------------------------- Kernel-Mode: System Address Space | | | | | | | | | __________________ | | Process block | | | EPROCESS | KTHREAD |__________________| | | | | _______________ | | | Thread block |---&gt;... | ----------&gt;| ETHREAD |------------| |_______________| Что есть в PEB и TEB PEB - Process Environment Block базовая информация об образе (базовый адрес, значение версии, список модулей) информации о куче в процессе переменные среды параметры командной строки путь для поиска DLL Чтобы отобразить: !peb dt nt!_PEB Чтобы посмотреть для чужого процесса: kd&gt; .process /p ffffe20fb340e080; !peb 10f90d5000 предварительно получив список процессов с адресами: !process 0 0 TEB - Thread Environment Block информация о стеке (база стека, лимит стека) TLS (thread local storage) массив Чтобы отобразить: !teb dt nt!_TEB Посмотреть потоки другого процесса: kd&gt; !process 0 4 processname.exe kd&gt; dt nt!_KTHREAD ffffe20faeb39080 Получаем руками все процессы: Общая идея примерно такая: Из PsActiveProcessHead получаем адрес, где лежит head списка процессов Само значение, которое мы получили, уже является ссылкой на следующий объект списка (то есть FLINK - forward link) Адрес, который мы получили - это структура LIST_ENTRY, в которой два поля: на след объект и на предыдущий, сам по себе этот полученный адрес лежит в середине структуры процесса в ActiveProcessLinks Получаем начало структуры процесса отнимая от полученного адреса сдвиг до начала kd&gt; x nt!PsActiveProcessHead fffff803`5f01df60 nt!PsActiveProcessHead = &lt;no type information&gt; kd&gt; dq fffff803`5f01df60 fffff803`5f01df60 ffffca86`79a5b488 ffffca86`806b5788 fffff803`5f01df70 00000000`000001f4 00000000`00000000 fffff803`5f01df80 00000000`00000000 00000000`00000000 fffff803`5f01df90 fffff803`5ed07ea0 00000000`00000000 kd&gt; dt nt!_EPROCESS ... +0x448 ActiveProcessLinks : _LIST_ENTRY ... kd&gt; ?ffffca86`79a5b488 - 0x448 Evaluate expression: -58796061380544 = ffffca86`79a5b040 kd&gt; dt nt!_EPROCESS ffffca86`79a5b040 (как прувнуть, что всё ок) ... +0x5a8 ImageFileName : [15] &quot;System&quot; Как получить следующие в списке процессы? Берём значение из ActiveProcessLinks Первый адрес - flink, второй - blink Отнимаем оффсет Дампим структуру Автоматизация: dt nt!_EPROCESS -l ActiveProcessLinks.Flink ffffca86`79a5b040 Получаем руками все потоки процесса: kd&gt; !process 0 0 ... PROCESS ffffca8680630080 SessionId: 1 Cid: 19cc Peb: 002ff000 ParentCid: 0abc DirBase: 135b3000 ObjectTable: ffffb60d17072980 HandleCount: 57. Image: threads.exe ... kd&gt; dt nt!_EPROCESS ffffca8680630080 ... +0x5e0 ThreadListHead : _LIST_ENTRY [ 0xffffca86`818bc9e8 - 0xffffca86`7bf5e9e8 ] ... kd&gt; dt nt!_ETHREAD ... +0x4e8 ThreadListEntry : _LIST_ENTRY ... kd&gt; ?0xffffca86`818bc9e8 - 0x4e8 Evaluate expression: -58795928861440 = ffffca86`818bc500 kd&gt; dt nt!_ETHREAD -l ThreadListEntry.Flink -y Thread ffffca86`818bc500 ... ThreadListEntry.Flink at 0xffffca86`818bc500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`851e59e8 - 0xffffca86`80630660 ] ... ThreadListEntry.Flink at 0xffffca86`851e5500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`7e37c9e8 - 0xffffca86`818bc9e8 ] ... ThreadListEntry.Flink at 0xffffca86`7e37c500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`7bf5e9e8 - 0xffffca86`851e59e8 ] ... ThreadListEntry.Flink at 0xffffca86`7bf5e500 +0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`80630660 - 0xffffca86`7e37c9e8 ] ... напочитать: Английская статья, откуда брал почти весь материал и пара ссылок на структуры / Understanding LIST_ENTRY Lists and Its Importance in Operating Systems - Meena Chockalingam Ядерные и не только структуры Чего там с этими LIST_ENTRY то","headline":"Ищем EPROCESS и ETHREAD, отнимаем байтики [ru]","image":"/assets/previews/6.jpg","mainEntityOfPage":{"@type":"WebPage","@id":"/2022/02/04/Searching_EPROCESS_ETHREAD.html"},"url":"/2022/02/04/Searching_EPROCESS_ETHREAD.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<link href="assets/favicon.ico" rel="icon" type="image/x-icon" />
+
+<body>
+  <div id="wrapper">
+    <header>
+  <div>
+    <a href="/">
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+    
+    <h1>truebad0ur@home:~$</h1>
+    </a>
+    <div class="header-links">
+      <a href="/archive.html"><h2 class="header-link">Archive</h2></a>
+<a href="/about.html"><h2 class="header-link">About</h2></a>
+<a href="/ToDo.html"><h2 class="header-link">ToDo</h2></a>
+<a href="/Certificates.html"><h2 class="header-link">Certificates</h2></a>
+<!--<a href="https://t.me/reverse_dungeon"><h2 class="header-link">Telegram</h2></a>-->
+
+    </div>
+  </div>
+</header>
+
+    <div class="container">
+      <section id="main_content">
+        <article>
+  <p>Каждый процесс представлен структурой EPROCESS (executive process block) в ядре. EPROCESS указывает на число связанных структур, например: у каждого процесса есть 1 или более потоков, которые представляются структурой ETHREAD.</p>
+
+<p>EPROCESS указывает на PEB (process environment block) в адресном пространстве процесса</p>
+
+<p>ETHREAD указывает на TEB (thread environment block) в адресном пространстве процесса</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+      	           _______________________
+                  |  Process environment  |
+             ---&gt; |      block (PEB)      | &lt;---------
+             |    |_______________________|          |
+             |                                       |
+             |                                       |
+             |                                   ______________
+             |                                  | Thread       |
+             |                                  | environment  |
+             |                                  | Block (TEB)  |
+             |                                  |______________|
+             |                                       ^
+             |                                       |
+User-Mode: Process Address Spase                     |
+----------------------------------------------------------------
+Kernel-Mode: System Address Space                    |
+             |                                       |
+             |                                       |
+             |                                       |
+             |                                       |
+        __________________                           |
+       |  Process block   |                          |
+       |    EPROCESS      |                       KTHREAD
+       |__________________|                          |
+             |                                       |
+             |           _______________             |
+             |          | Thread block  |---&gt;...     |
+             ----------&gt;|    ETHREAD    |------------|
+                        |_______________|
+
+
+
+</code></pre></div></div>
+
+<h2 id="что-есть-в-peb-и-teb"><a href="#header-2"></a>Что есть в PEB и TEB</h2>
+
+<h3 id="peb---process-environment-block"><a href="#header-3"></a>PEB - Process Environment Block</h3>
+
+<ul>
+  <li>базовая информация об образе (базовый адрес, значение версии, список модулей)</li>
+  <li>информации о куче в процессе</li>
+  <li>переменные среды</li>
+  <li>параметры командной строки</li>
+  <li>путь для поиска DLL</li>
+</ul>
+
+<h4 id="чтобы-отобразить"><a href="#header-4"></a>Чтобы отобразить:</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">!</span><span class="nx">peb</span>
+<span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_PEB</span>
+</code></pre></div></div>
+
+<h4 id="чтобы-посмотреть-для-чужого-процесса"><a href="#header-4"></a>Чтобы посмотреть для чужого процесса:</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">kd</span><span class="o">&gt;</span> <span class="p">.</span><span class="nx">process</span> <span class="o">/</span><span class="nx">p</span> <span class="nx">ffffe20fb340e080</span><span class="p">;</span> <span class="o">!</span><span class="nx">peb</span> <span class="mi">10</span><span class="nx">f90d5000</span>
+<span class="nx">предварительно</span> <span class="nx">получив</span> <span class="nx">список</span> <span class="nx">процессов</span> <span class="nx">с</span> <span class="nx">адресами</span><span class="p">:</span> 
+<span class="o">!</span><span class="nx">process</span> <span class="mi">0</span> <span class="mi">0</span>
+</code></pre></div></div>
+
+<h3 id="teb---thread-environment-block"><a href="#header-3"></a>TEB - Thread Environment Block</h3>
+
+<ul>
+  <li>информация о стеке (база стека, лимит стека)</li>
+  <li>TLS (thread local storage) массив</li>
+</ul>
+
+<h4 id="чтобы-отобразить-1"><a href="#header-4"></a>Чтобы отобразить:</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">!</span><span class="nx">teb</span>
+<span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_TEB</span>
+</code></pre></div></div>
+
+<h4 id="посмотреть-потоки-другого-процесса"><a href="#header-4"></a>Посмотреть потоки другого процесса:</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">kd</span><span class="o">&gt;</span> <span class="o">!</span><span class="nx">process</span> <span class="mi">0</span> <span class="mi">4</span> <span class="nx">processname</span><span class="p">.</span><span class="nx">exe</span>
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_KTHREAD</span> <span class="nx">ffffe20faeb39080</span>
+</code></pre></div></div>
+
+<h2 id="получаем-руками-все-процессы"><a href="#header-2"></a>Получаем руками все процессы:</h2>
+
+<h4 id="общая-идея-примерно-такая"><a href="#header-4"></a>Общая идея примерно такая:</h4>
+
+<ol>
+  <li>Из <strong>PsActiveProcessHead</strong> получаем адрес, где лежит head списка процессов</li>
+  <li>Само значение, которое мы получили, уже является ссылкой на следующий объект списка (то есть FLINK - forward link)</li>
+  <li>Адрес, который мы получили - это структура LIST_ENTRY, в которой два поля: на след объект и на предыдущий, сам по себе этот полученный адрес лежит в середине структуры процесса в ActiveProcessLinks</li>
+  <li>Получаем начало структуры процесса отнимая от полученного адреса сдвиг до начала</li>
+</ol>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">x</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">PsActiveProcessHead</span>
+<span class="nx">fffff803</span><span class="s2">`5f01df60 nt!PsActiveProcessHead = &lt;no type information&gt;
+
+kd&gt; dq fffff803`</span><span class="mi">5</span><span class="nx">f01df60</span>
+<span class="nx">fffff803</span><span class="s2">`5f01df60  ffffca86`</span><span class="mi">79</span><span class="nx">a5b488</span> <span class="nx">ffffca86</span><span class="s2">`806b5788
+fffff803`</span><span class="mi">5</span><span class="nx">f01df70</span>  <span class="mi">00000000</span><span class="s2">`000001f4 00000000`</span><span class="mi">00000000</span>
+<span class="nx">fffff803</span><span class="s2">`5f01df80  00000000`</span><span class="mi">00000000</span> <span class="mi">00000000</span><span class="s2">`00000000
+fffff803`</span><span class="mi">5</span><span class="nx">f01df90</span>  <span class="nx">fffff803</span><span class="s2">`5ed07ea0 00000000`</span><span class="mi">00000000</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_EPROCESS</span>
+<span class="p">...</span>
+<span class="o">+</span><span class="mh">0x448</span> <span class="nx">ActiveProcessLinks</span> <span class="p">:</span> <span class="nx">_LIST_ENTRY</span>
+<span class="p">...</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="p">?</span><span class="nx">ffffca86</span><span class="s2">`79a5b488 - 0x448
+Evaluate expression: -58796061380544 = ffffca86`</span><span class="mi">79</span><span class="nx">a5b040</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_EPROCESS</span> <span class="nx">ffffca86</span><span class="s2">`79a5b040
+(как прувнуть, что всё ок)
+...
++0x5a8 ImageFileName    : [15]  "System"
+</span></code></pre></div></div>
+
+<h4 id="как-получить-следующие-в-списке-процессы"><a href="#header-4"></a>Как получить следующие в списке процессы?</h4>
+
+<ol>
+  <li>Берём значение из ActiveProcessLinks</li>
+  <li>Первый адрес - flink, второй - blink</li>
+  <li>Отнимаем оффсет</li>
+  <li>Дампим структуру</li>
+</ol>
+
+<h4 id="автоматизация"><a href="#header-4"></a>Автоматизация:</h4>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_EPROCESS</span> <span class="o">-</span><span class="nx">l</span> <span class="nx">ActiveProcessLinks</span><span class="p">.</span><span class="nx">Flink</span> <span class="nx">ffffca86</span><span class="s2">`79a5b040
+</span></code></pre></div></div>
+
+<h2 id="получаем-руками-все-потоки-процесса"><a href="#header-2"></a>Получаем руками все потоки процесса:</h2>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">kd</span><span class="o">&gt;</span> <span class="o">!</span><span class="nx">process</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="p">...</span>
+<span class="nx">PROCESS</span> <span class="nx">ffffca8680630080</span>
+    <span class="nx">SessionId</span><span class="p">:</span> <span class="mi">1</span>  <span class="nx">Cid</span><span class="p">:</span> <span class="mi">19</span><span class="nx">cc</span>    <span class="nx">Peb</span><span class="p">:</span> <span class="mi">002</span><span class="nx">ff000</span>  <span class="nx">ParentCid</span><span class="p">:</span> <span class="mi">0</span><span class="nx">abc</span>
+    <span class="nx">DirBase</span><span class="p">:</span> <span class="mi">135</span><span class="nx">b3000</span>  <span class="nx">ObjectTable</span><span class="p">:</span> <span class="nx">ffffb60d17072980</span>  <span class="nx">HandleCount</span><span class="p">:</span>  <span class="mi">57</span><span class="p">.</span>
+    <span class="nx">Image</span><span class="p">:</span> <span class="nx">threads</span><span class="p">.</span><span class="nx">exe</span>
+<span class="p">...</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_EPROCESS</span> <span class="nx">ffffca8680630080</span>
+<span class="p">...</span>
+<span class="o">+</span><span class="mh">0x5e0</span> <span class="nx">ThreadListHead</span>   <span class="p">:</span> <span class="nx">_LIST_ENTRY</span> <span class="p">[</span> <span class="mh">0xffffca86</span><span class="s2">`818bc9e8 - 0xffffca86`</span><span class="mi">7</span><span class="nx">bf5e9e8</span> <span class="p">]</span>
+<span class="p">...</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_ETHREAD</span>
+<span class="p">...</span>
+<span class="o">+</span><span class="mh">0x4e8</span> <span class="nx">ThreadListEntry</span>  <span class="p">:</span> <span class="nx">_LIST_ENTRY</span>
+<span class="p">...</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="p">?</span><span class="mh">0xffffca86</span><span class="s2">`818bc9e8 - 0x4e8
+Evaluate expression: -58795928861440 = ffffca86`</span><span class="mi">818</span><span class="nx">bc500</span>
+
+<span class="nx">kd</span><span class="o">&gt;</span> <span class="nx">dt</span> <span class="nx">nt</span><span class="o">!</span><span class="nx">_ETHREAD</span> <span class="o">-</span><span class="nx">l</span> <span class="nx">ThreadListEntry</span><span class="p">.</span><span class="nx">Flink</span> <span class="o">-</span><span class="nx">y</span> <span class="nx">Thread</span> <span class="nx">ffffca86</span><span class="s2">`818bc500
+...
+ThreadListEntry.Flink at 0xffffca86`</span><span class="mi">818</span><span class="nx">bc500</span>
+<span class="o">+</span><span class="mh">0x4e8</span> <span class="nx">ThreadListEntry</span> <span class="p">:</span> <span class="nx">_LIST_ENTRY</span> <span class="p">[</span> <span class="mh">0xffffca86</span><span class="s2">`851e59e8 - 0xffffca86`</span><span class="mi">80630660</span> <span class="p">]</span>
+<span class="p">...</span>
+<span class="nx">ThreadListEntry</span><span class="p">.</span><span class="nx">Flink</span> <span class="nx">at</span> <span class="mh">0xffffca86</span><span class="s2">`851e5500
++0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`</span><span class="mi">7</span><span class="nx">e37c9e8</span> <span class="o">-</span> <span class="mh">0xffffca86</span><span class="s2">`818bc9e8 ]
+...
+ThreadListEntry.Flink at 0xffffca86`</span><span class="mi">7</span><span class="nx">e37c500</span>
+<span class="o">+</span><span class="mh">0x4e8</span> <span class="nx">ThreadListEntry</span> <span class="p">:</span> <span class="nx">_LIST_ENTRY</span> <span class="p">[</span> <span class="mh">0xffffca86</span><span class="s2">`7bf5e9e8 - 0xffffca86`</span><span class="mi">851</span><span class="nx">e59e8</span> <span class="p">]</span>
+<span class="p">...</span>
+<span class="nx">ThreadListEntry</span><span class="p">.</span><span class="nx">Flink</span> <span class="nx">at</span> <span class="mh">0xffffca86</span><span class="s2">`7bf5e500
++0x4e8 ThreadListEntry : _LIST_ENTRY [ 0xffffca86`</span><span class="mi">80630660</span> <span class="o">-</span> <span class="mh">0xffffca86</span><span class="s2">`7e37c9e8 ]
+...
+</span></code></pre></div></div>
+
+<h4 id="напочитать"><a href="#header-4"></a>напочитать:</h4>
+
+<p><a href="https://www.codeproject.com/Articles/800404/Understanding-LIST-ENTRY-Lists-and-Its-Importance">Английская статья, откуда брал почти весь материал и пара ссылок на структуры / Understanding LIST_ENTRY Lists and Its Importance in Operating Systems - Meena Chockalingam</a></p>
+
+<p><a href="http://terminus.rewolf.pl/terminus/structures/ntdll/_EPROCESS_x64.html">Ядерные и не только структуры</a></p>
+
+<p><a href="https://blog.fearcat.in/a?ID=01550-e4fe17fe-3059-472f-97a7-7e77c7b72302">Чего там с этими LIST_ENTRY то</a></p>
+
+</article>
+      </section>
+    </div>
+  </div>
+</body>
+
+</html>
