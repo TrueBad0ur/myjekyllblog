@@ -1,5 +1,5 @@
 name: Deploying website
-run-name: ${{ github.actor }} is deploying his website 🚀
+run-name: ${{ github.actor }} is deploying Jekyll website
 on: [push]
 jobs:
   Pull-And-Deploy-New-Code:

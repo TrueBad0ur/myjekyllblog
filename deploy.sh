@@ -1,3 +1,3 @@
 #!/bin/bash
 
-jekyll build --source /root/projects/myjekyllblog/jekyll --destination ./static/
+jekyll build --source ./jekyll --destination ./static/
