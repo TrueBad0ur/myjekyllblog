@@ -27,8 +27,6 @@ pagination:
 
 [http://www.securitytube.net/](http://www.securitytube.net/)
 
-[https://p.ost2.fyi/](https://p.ost2.fyi/)
-
 [https://fuzzysecurity.com/tutorials.html](https://fuzzysecurity.com/tutorials.html)
 
 [https://anti-debug.checkpoint.com/](https://anti-debug.checkpoint.com/)
@@ -324,9 +322,6 @@ pagination:
 
 #### [](#header-4)Задачки форензика + ревёрс
 [https://www.amanhardikar.com/mindmaps/ForensicChallenges.html](https://www.amanhardikar.com/mindmaps/ForensicChallenges.html)
-
-#### [](#header-4)Много бинарщины
-[https://p.ost2.fyi](https://p.ost2.fyi)
 
 #### [](#header-4)Course materials for Advanced Binary Deobfuscation by NTT Secure Platform Laboratories
 [https://github.com/malrev/ABD](https://github.com/malrev/ABD)
