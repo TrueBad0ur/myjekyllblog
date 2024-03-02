@@ -18,6 +18,8 @@ Interactive notes/commands for kubectl, which may help for certifications:
 | k create deploy NAME --image=httpd:alpine -oyaml --dry-run=client > deploy.yaml |
 | k exec desploy NAME -- sh |
 | k scale deploy NAME --replicas 0 |
+| k get crd NAME -oyaml |
+| k expose deploy NAME --port 80 |
 
 
 Templates:
@@ -101,4 +103,62 @@ spec:
     app: my-app
     version: v1
   type: NodePort
+```
+
+Ingress:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cafe-ingress
+spec:
+  ingressClassName: nginx
+  #tls:
+  #- hosts:
+  #  - cafe.local
+  #  secretName: cafe-secret
+  rules:
+  - host: cafe.local
+    http:
+      paths:
+      - path: /tea
+        pathType: Prefix
+        backend:
+          service:
+            name: tea-svc
+            port:
+              number: 80
+      - path: /coffee
+        pathType: Prefix
+        backend:
+          service:
+            name: coffee-svc
+            port:
+              number: 80
+```
+
+Egress:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np
+  namespace: space1
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+  - to:
+     - namespaceSelector:
+        matchLabels:
+         kubernetes.io/metadata.name: space2
+
 ```
