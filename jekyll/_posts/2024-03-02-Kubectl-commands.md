@@ -1,8 +1,8 @@
 ---
 title: Kubectl commands (CKAD, CKA, CKS) [eng]
 published: true
-tags: [ "devops" "kubernetes" "kubectl" ]
-image: assets/previews/28.jpg
+tags: [ "devops", "kubernetes", "kubectl" ]
+image: /assets/previews/28.jpg
 layout: page
 pagination: 
   enabled: true
