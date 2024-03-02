@@ -76,6 +76,10 @@ pagination:
 
 [p.ost2.fyi](https://p.ost2.fyi)
 
+[MIT Operating System Engineering 6.1810(6.S081) Course](https://github.com/yaruwangway/6.S081)
+
+[Перевод глав из книги курса выше](https://habr.com/ru/articles/797557)
+
 [securitytube.net](http://www.securitytube.net)
 
 [ctf101.org/binary-exploitation/overview](https://ctf101.org/binary-exploitation/overview)
