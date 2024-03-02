@@ -21,4 +21,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          script: ${{ secrets.PATH }}deploy.sh
+          script: cd ${{ secrets.PATH }}; ./deploy.sh
