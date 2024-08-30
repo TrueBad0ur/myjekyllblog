@@ -3,4 +3,4 @@ _site
 *-cache/
 .bundle/
 vendor/
-./static/*
+static/
