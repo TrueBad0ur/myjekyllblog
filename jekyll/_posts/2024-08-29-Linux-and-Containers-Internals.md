@@ -11,15 +11,22 @@ pagination:
 # [](#header-1)Capabilities
 
 It's actually an additional way to secure (in addition to default RWX) processes. We have main tools in userspace to interact with them:
+
 setcap
+
 getcap
+
 capsh --print
+
 getpcaps $$
+
 (and others from [libcap2](https://packages.debian.org/sid/libcap2) package)
+
 From the official debian description:
 >Libcap implements the user-space interfaces to the POSIX 1003.1e capabilities available in Linux kernels. These capabilities are a partitioning of the all powerful root privilege into a set of distinct privileges.
 
 From [linux man page](https://man7.org/linux/man-pages/man7/capabilities.7.html) we have all available capabilities, lit's dive into the source code of one of them
+
 One of them, which everyone knows - 
 ```
 CAP_NET_BIND_SERVICE
@@ -106,7 +113,9 @@ func (f Flag) String() string {
 ```
 
 **Effective** - currently activated for process
+
 **Permitted** - may be potentially activated and moved to Effective
+
 **Inheritable** - rights, which may be inherited by a child process, if it explicitly requests it
 
 The full list can be found for ex in
@@ -426,10 +435,10 @@ We switch namespaces to PID 1 process
 
 ## [](#header-2)Links / Resources
 [Linux Capabilities: making them work](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/33528.pdf)
+
 [Bug case in sendmail](https://seclists.org/bugtraq/2000/Jun/98)
+
 [capabilities walkthough](https://blog.senyuuri.info/posts/2021-02-06-linux-capability-a-kernel-workthrough/)
-
-
 
 # [](#header-1)All Links / Resources
 [Papers extracted from the proceedings of the Ottawa Linux Symposium](https://www.kernel.org/doc/ols/)
