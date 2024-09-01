@@ -432,6 +432,54 @@ nsenter --target 1 --mount --uts --ipc --net /bin/bash
 ```
 We switch namespaces to PID 1 process
 
+# [](#header-1)Cgroups
+
+Check which cgroups version is used (different directories structure, so we need to know :) )
+```bash
+mount | grep cgroup
+if cgroup2 so v2
+```
+
+Create out own cgroup:
+```bash
+sudo mkdir /sys/fs/cgroup/custom_cgroup
+```
+
+Limit memory(50MB):
+```bash
+echo $((50 * 1024 * 1024)) | sudo tee /sys/fs/cgroup/custom_cgroup/memory.max
+```
+
+Create new process or just out current PID into out cgroup's config:
+```bash
+echo $$ | sudo tee /sys/fs/cgroup/custom_cgroup/cgroup.procs
+```
+
+Run test
+```bash
+stress --vm-bytes 49M --vm-keep -m 1
+> OK
+
+stress --vm-bytes 100M --vm-keep -m 1
+Get smth like(OOM kills us):
+stress: info: [247560] dispatching hogs: 0 cpu, 0 io, 1 vm, 0 hdd
+stress: FAIL: [247560] (425) <-- worker 247561 got signal 9
+stress: WARN: [247560] (427) now reaping child worker processes
+stress: FAIL: [247560] (461) failed run completed in 0s
+```
+
+Check stats:
+```bash
+cat /sys/fs/cgroup/my_cgroup/memory.events
+
+low 0
+high 0
+max 13539
+oom 4
+oom_kill 4
+oom_group_kill 0
+(I tried it 4 times)
+```
 
 ## [](#header-2)Links / Resources
 [Linux Capabilities: making them work](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/33528.pdf)
