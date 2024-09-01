@@ -1,6 +1,6 @@
 ---
-title: Linux and Containers Internals [eng]
-published: false
+title: Linux and Containers Internals [eng] [in process]
+published: true
 tags: [ "linux", "containers", "research" ]
 image: /assets/previews/30.jpg
 layout: page
