@@ -107,3 +107,92 @@ Waiting loop: The main loop in main() uses pause() to have the process wait inde
 The return of error code 42 at the end of the pause container has a humorous connotation and is a reference to the science fiction novel "Hitchhiker's Guide to the Galaxy" by Douglas Adams. In this novel, the number 42 is the answer to "The ultimate question of life, the universe and everything".
 
 In the context of a pause container, returning 42 instead of the usual error codes such as 1 or 0 has no particular significance to the functioning of the program, but adds an element of irony and a reference to popular culture. This is often seen among developers as a way to "liven up" the code a bit.
+
+## [](#header-2)Random port in NodePort?
+```go
+pkg/registry/core/service/portallocator/allocator.go
+func (r *PortAllocator) AllocateNext() (int, error) {
+	offset, ok, err := r.alloc.AllocateNext()
+	if err != nil {
+		r.metrics.incrementAllocationErrors("dynamic")
+		return 0, err
+	}
+	if !ok {
+		r.metrics.incrementAllocationErrors("dynamic")
+		return 0, ErrFull
+	}
+
+	// update metrics
+	r.metrics.incrementAllocations("dynamic")
+	r.metrics.setAllocated(r.Used())
+	r.metrics.setAvailable(r.Free())
+
+	return r.portRange.Base + offset, nil
+}
+
+...
+
+type PortAllocator struct {
+	portRange net.PortRange
+
+	alloc allocator.Interface
+
+	// metrics is a metrics recorder that can be disabled
+	metrics metricsRecorderInterface
+}
+```
+
+```go
+pkg/registry/core/service/allocator/interfaces.go
+type Interface interface {
+	Allocate(int) (bool, error)
+	AllocateNext() (int, bool, error)
+	Release(int) error
+	ForEach(func(int))
+	Has(int) bool
+	Free() int
+
+	// Destroy shuts down all internal structures.
+	// Destroy needs to be implemented in thread-safe way and be prepared for being
+	// called more than once.
+	Destroy()
+}
+```
+
+```go
+pkg/registry/core/service/allocator/bitmap.go
+func (r *AllocationBitmap) AllocateNext() (int, bool, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	next, ok := r.strategy.AllocateBit(r.allocated, r.max, r.count)
+	if !ok {
+		return 0, false, nil
+	}
+	r.count++
+	r.allocated = r.allocated.SetBit(r.allocated, next, 1)
+	return next, true, nil
+}
+
+...
+
+type randomScanStrategy struct {
+	rand *rand.Rand
+}
+
+func (rss randomScanStrategy) AllocateBit(allocated *big.Int, max, count int) (int, bool) {
+	if count >= max {
+		return 0, false
+	}
+	offset := rss.rand.Intn(max)
+	for i := 0; i < max; i++ {
+		at := (offset + i) % max
+		if allocated.Bit(at) == 0 {
+			return at, true
+		}
+	}
+	return 0, false
+}
+```
+
+Yes, actually random :)
