@@ -758,6 +758,30 @@ As in the previous example if we enable ```PSA``` with ```pod-security.kubernete
 
 #### [](#header-4)hostIPC
 
+It doesn't work for pods with this config feature (if you create smth in shared /dev/shm in any pod and try to get it inside your attacker pod, it woun't, just files and staff created on the real host)
+
+```yaml
+attacker.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: attacker
+  namespace: vuln-psa-ns
+spec:
+  hostIPC: true
+  containers:
+  - name: attacker
+    image: ubuntu
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "sleep 99999" ]
+  nodeName: worker
+```
+
+```bash
+On the host we put smth to /dev/shm/secretfile
+and now we can access it from the created pod
+```
+
 #### [](#header-4)hostPath
 
 #### [](#header-4)privileged
