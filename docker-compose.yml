@@ -6,3 +6,4 @@ services:
      - ./static:/usr/share/nginx/html/
     ports:
      - "127.0.0.1:7998:80"
+    restart: always
