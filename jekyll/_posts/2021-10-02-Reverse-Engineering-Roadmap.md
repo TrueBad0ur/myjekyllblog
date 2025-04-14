@@ -1262,6 +1262,9 @@ pagination:
 
 [Windows Internals course by sourcelens.com.au](https://www.youtube.com/playlist?list=PLhx7-txsG6t5i-kIZ_hwJSgZrnka4GXvn)
 
+#### [](#header-4)Интерактивные примеры по CVE'хам
+[https://vulnerable.codes](https://vulnerable.codes)
+
 
 ## [](#header-1)Книги
 
